@@ -1,0 +1,9 @@
+{
+  "key": "followup",
+  "title": "Customer Follow-up",
+  "subtitle": "After service to reviews + repeat",
+  "stages": ["Done Jobs List", "Thank Message", "Ask Review", "Repeat Offer", "Book Again"],
+  "startNow": ["Done jobs notebook/list", "WhatsApp broadcast list", "Review link"],
+  "next": ["Scheduled reminders (Termii/ZeptoMail)"],
+  "later": ["Automatic review + loyalty flow"]
+}

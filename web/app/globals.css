@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #1A56DB;
+  --ink: #2B3440;
+  --mist: #F8FAFD;
+  --line: #E6EAF0;
+  --action: #E8590C;
+  --action-dark: #C94A08;
+  --action-bg: #FFF7F0;
+  --growth-bg: #F2FBF4;
+  --growth-box: #DFF5E3;
+  --growth-border: #A9DFBF;
+  --growth-line: #34A853;
+  --growth-text: #1B7A3D;
+}
+
+body { background: #fff; color: var(--ink); font-family: Inter, Arial, sans-serif; }
+.btn-primary { background: var(--primary); color: #fff; border-radius: 14px; padding: 15px; font-weight: 700; width: 100%; }
+.btn-action { background: var(--action); color: #fff; border-radius: 14px; padding: 15px; font-weight: 700; width: 100%; box-shadow: 0 4px 14px rgba(232,89,12,.35); }
+.btn-ghost { background: #F2F4F7; color: #1A3A5C; border: 1px solid var(--line); border-radius: 14px; padding: 15px; width: 100%; }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(26,58,92,.06); }
+.card-action { border: 2px solid var(--action); background: var(--action-bg); }
+.card-growth { background: var(--growth-bg); border: 1.5px solid var(--growth-border); }

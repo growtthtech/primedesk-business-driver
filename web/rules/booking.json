@@ -1,0 +1,9 @@
+{
+  "key": "booking",
+  "title": "Customer Booking",
+  "subtitle": "From first message to booked service",
+  "stages": ["Enquiry (WhatsApp)", "Price / Quote", "Payment (Transfer)", "Book Time", "Assign Staff", "Do Service", "Follow-up"],
+  "startNow": ["WhatsApp Business — for messages", "Simple customer list — for records", "Moniepoint / Transfer record — for money"],
+  "next": ["Shared booking calendar", "Customer list + reminders"],
+  "later": ["Full CRM + automatic follow-up"]
+}

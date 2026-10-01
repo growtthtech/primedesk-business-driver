@@ -1,0 +1,9 @@
+{
+  "key": "orders",
+  "title": "Orders + Payment",
+  "subtitle": "From order to paid + delivery",
+  "stages": ["Order (WhatsApp/DM)", "Confirm + Price", "Payment (Transfer/Paystack)", "Pack / Prepare", "Rider / Delivery", "Delivered", "Follow-up"],
+  "startNow": ["WhatsApp Business catalogue", "Simple order list", "Transfer / Paystack record"],
+  "next": ["Order form → list", "Rider tracker"],
+  "later": ["Inventory + auto updates"]
+}
