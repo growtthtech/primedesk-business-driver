@@ -1,44 +1,24 @@
-# PrimeDesk Design System v2 — Business Navy + Gold (Review Guide)
+# PrimeDesk Design System v3 — Light Business (Review Guide)
 
-Open `DESIGN-PREVIEW.html` (double-click it) alongside this file.
+Open `DESIGN-PREVIEW.html` (double-click it).
 
-**Change log v1 → v2:** Removed green #0E7A5F. New theme communicates business + entrepreneurship.
+**Change v2 → v3 (lighter):** White page #FFFFFF, Mist sections #F8FAFD, thin 1.5px borders #E6EAF0, bigger radius 14-16px, soft shadows, more padding. Navy dark #102845 replaced with brighter Business Blue #1A56DB used ONLY on primary button. Gold softened to champagne #F6C453 used only for badges, Start Now border, timeline.
 
-## 1. Why Navy + Gold?
-- **Business Navy #102845:** trust, structure, corporate seriousness. Says "we handle your business well." Used for main buttons, headers, map borders, Done state.
-- **Entrepreneur Gold #E8B62A:** ambition, growth, success, premium hustle. Says "we move you forward." Used sparingly for timeline, arrows, Start Now border, badges, button underline.
-- **Warm Paper #FAF8F3 background + Deep Navy #0B1D33 top bar:** premium paper feel, works in bright sunlight on cheap Androids.
+## Why lighter works for business
+- Feels open, clean, modern — like a new shop, not a bank vault.
+- Easier in sunlight on cheap Androids (less dark ink).
+- Gold still says entrepreneurship/success but doesn't shout.
 
-Green felt like health/fintech. Navy+Gold feels like a business club / chamber of commerce — right for owners who want to grow.
+## Colors
+- Blue #1A56DB: primary button only + Done pill text.
+- Soft Gold #F6C453 / light bg #FFF8E1 / border #F0D97A: highlights only.
+- Mist #F8FAFD: section backgrounds.
+- Text #2B3440 softer charcoal, Hint #7A8699.
+- Status pastel: Done #EDF3FE, Waiting #FFF8E1, Stuck #FFF1F1 with thin outlines.
 
-## 2. Colors (see preview Section 1)
-- Primary Navy #102845: main buttons (white text), selected states.
-- Gold #E8B62A: accents only, never large backgrounds (hard to read). 3px underline on primary button, 6px left border on Start Now, timeline line, arrows #C8962E darker gold for contrast.
-- Background #FAF8F3, Cards white with #EDE6D6 border.
-- Text Charcoal #1A1D21.
-- Status: Done = navy tint #E6EDF5 / #102845 (professional, not playful green), Waiting = warm #FEF0DC / #9A6200, Stuck = red #FDE8E8 / #B42323 only when action needed.
+## Components
+Same 7 parts, lighter style: 14px radius, 15px button padding, stage boxes light blue-grey, arrows thin gold, timeline 2px gold.
 
-## 3. Text (unchanged)
-- Font Inter, Title 24 bold, Section 20, Body 16, Hint 14 grey.
-- Voice: Simple English + WhatsApp examples. "Your tools", "Waiting", never tech words.
-
-## 4. Components (match preview)
-1. Button: full width 48px, Navy + gold bottom border. Ghost Back light grey + navy text.
-2. Process Card: white + navy border on select.
-3. Stage Node: white box navy border + gold ↓ arrow, Rename/Delete, +Add.
-4. Status Pill: Done/Waiting/Stuck as above, tappable.
-5. Plan Card: Start Now gold border + GOLD badge, Next navy border, Later grey.
-6. Tool Row: Name + What for + Which stage + When to upgrade.
-7. Growth Timeline: gold vertical line, Today → Next-Scale → Future-Lead.
-
-## 5. Layout rules (unchanged)
-- Max 480px centered, one primary action per screen, no side menu, <100KB per screen.
-
-## 6. Review actions
-Reply with one:
-- Keep Navy+Gold
-- More Gold (e.g., gold headers)
-- Less Gold (e.g., arrows navy)
-- Try Blue-Only (no gold)
-
-Next after approval: update Tailwind tokens in `/web` to these hex codes, then Figma.
+## Review
+Reply: Keep Light v3 / Even Lighter (more white, remove shadows) / Add a little more color (stronger blue headers).
+Next: lock Tailwind tokens to these hex codes for `/web`.
