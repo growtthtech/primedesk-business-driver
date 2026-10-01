@@ -1,50 +1,44 @@
-# PrimeDesk Design System v1 — Review Guide
+# PrimeDesk Design System v2 — Business Navy + Gold (Review Guide)
 
-Open `DESIGN-PREVIEW.html` (double-click it) alongside this file. That HTML shows what this doc describes.
+Open `DESIGN-PREVIEW.html` (double-click it) alongside this file.
 
-## 1. Why this design?
-Nigeria owners live on small Android phones, often 2G/3G, bright sunlight, shared phones. Design must feel like Uber/TurboTax: calm, big, one action per screen. No dashboard maze.
+**Change log v1 → v2:** Removed green #0E7A5F. New theme communicates business + entrepreneurship.
+
+## 1. Why Navy + Gold?
+- **Business Navy #102845:** trust, structure, corporate seriousness. Says "we handle your business well." Used for main buttons, headers, map borders, Done state.
+- **Entrepreneur Gold #E8B62A:** ambition, growth, success, premium hustle. Says "we move you forward." Used sparingly for timeline, arrows, Start Now border, badges, button underline.
+- **Warm Paper #FAF8F3 background + Deep Navy #0B1D33 top bar:** premium paper feel, works in bright sunlight on cheap Androids.
+
+Green felt like health/fintech. Navy+Gold feels like a business club / chamber of commerce — right for owners who want to grow.
 
 ## 2. Colors (see preview Section 1)
-- Primary Green #0E7A5F: main buttons, selected map border. Means trust/growth.
-- Charcoal #1A1D21: all text.
-- Off-white #F7F8F7: page background. White cards on top.
-- Yellow #FFC53D: only for attention badges, sparingly.
-- Waiting Orange #E8830C, Stuck Red #D93D3D, Done Green #0E7A5F on light green bg.
-**To decide:** Do these feel trustworthy for beauty/food vendors? If not, suggest 1 primary swap.
+- Primary Navy #102845: main buttons (white text), selected states.
+- Gold #E8B62A: accents only, never large backgrounds (hard to read). 3px underline on primary button, 6px left border on Start Now, timeline line, arrows #C8962E darker gold for contrast.
+- Background #FAF8F3, Cards white with #EDE6D6 border.
+- Text Charcoal #1A1D21.
+- Status: Done = navy tint #E6EDF5 / #102845 (professional, not playful green), Waiting = warm #FEF0DC / #9A6200, Stuck = red #FDE8E8 / #B42323 only when action needed.
 
-## 3. Text
-- Font: Inter (free, clear on cheap phones).
-- Sizes: Title 24 bold, Section 20, Body 16, Hint 14 grey.
-- Voice: Simple English + WhatsApp examples. Never say Integration, Orchestration, Execution. Say: Your tools, How they work together, Waiting.
-- Example good: "12 jobs have no follow-up — you may lose repeat bookings." Bad: "Workflow failed."
+## 3. Text (unchanged)
+- Font Inter, Title 24 bold, Section 20, Body 16, Hint 14 grey.
+- Voice: Simple English + WhatsApp examples. "Your tools", "Waiting", never tech words.
 
-## 4. Components checklist (match preview Sections 2-6)
-1. Button: full width, 48px min, Primary + Ghost Back.
-2. Process Card: big tappable, title + 1-line desc.
-3. Stage Node: white box green border + ↓ arrow, Rename/Delete, +Add row.
-4. Status Pill: Done / Waiting / Stuck, tappable.
-5. Plan Card: Start Now (green left border) / Next (grey) / Later (light). Checkbox "I use this".
+## 4. Components (match preview)
+1. Button: full width 48px, Navy + gold bottom border. Ghost Back light grey + navy text.
+2. Process Card: white + navy border on select.
+3. Stage Node: white box navy border + gold ↓ arrow, Rename/Delete, +Add.
+4. Status Pill: Done/Waiting/Stuck as above, tappable.
+5. Plan Card: Start Now gold border + GOLD badge, Next navy border, Later grey.
 6. Tool Row: Name + What for + Which stage + When to upgrade.
-7. Growth Timeline: vertical line Today → Next → Future.
+7. Growth Timeline: gold vertical line, Today → Next-Scale → Future-Lead.
 
-## 5. Layout rules
-- Max width 480px centered (phone feel) even on laptop.
-- One primary button per screen. Back is always ghost link.
-- No side menu in MVP. Only 3 tabs in Home.
-- Each screen <100KB, no heavy images.
+## 5. Layout rules (unchanged)
+- Max 480px centered, one primary action per screen, no side menu, <100KB per screen.
 
-## 6. What makes journey successful (design part)
-- Owner finishes 6 steps in <10 min without help.
-- Map confirmation moment: "Yes, this is my business."
-- Plan understood in 30 seconds: what now vs later.
-- Return: Growth Path makes them come back in 7 days.
-
-## 7. Your review actions
+## 6. Review actions
 Reply with one:
-- Keep All
-- Change Colors: tell me which
-- Change Words: paste better wording
-- Change Layout: e.g., "map horizontal not vertical"
+- Keep Navy+Gold
+- More Gold (e.g., gold headers)
+- Less Gold (e.g., arrows navy)
+- Try Blue-Only (no gold)
 
-Next after approval: Figma clickable version of same 6 screens, then build.
+Next after approval: update Tailwind tokens in `/web` to these hex codes, then Figma.

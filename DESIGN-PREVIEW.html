@@ -2,60 +2,65 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PrimeDesk Design System Preview v1</title>
+<title>PrimeDesk Design System v2 - Business Navy + Gold</title>
 <style>
-body{font-family:Inter,Arial,sans-serif;background:#F7F8F7;color:#1A1D21;margin:0;padding:20px}
+body{font-family:Inter,Arial,sans-serif;background:#FAF8F3;color:#1A1D21;margin:0;padding:20px}
 .wrap{max-width:720px;margin:auto}
-.card{background:#fff;border-radius:12px;padding:16px;margin:12px 0;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-h1{font-size:24px}h2{font-size:20px;margin-top:28px;border-bottom:2px solid #0E7A5F;padding-bottom:6px}
+.topnote{background:#102845;color:#fff;border-radius:12px;padding:14px 16px;margin:12px 0}
+.topnote b{color:#E8B62A}
+.card{background:#fff;border-radius:12px;padding:16px;margin:12px 0;box-shadow:0 1px 4px rgba(16,40,69,.12);border:1px solid #EDE6D6}
+h1{font-size:24px}h2{font-size:20px;margin-top:28px;border-bottom:3px solid #E8B62A;padding-bottom:6px}
 .swatches{display:flex;gap:10px;flex-wrap:wrap}
-.sw{width:140px;border-radius:10px;overflow:hidden;border:1px solid #ddd}
+.sw{width:150px;border-radius:10px;overflow:hidden;border:1px solid #ddd}
 .sw div{height:60px}.sw p{margin:0;padding:8px;font-size:13px;background:#fff}
 .btn{display:block;width:100%;padding:14px;border-radius:10px;border:0;font-size:16px;font-weight:700;margin:8px 0;cursor:pointer}
-.btn-p{background:#0E7A5F;color:#fff}.btn-g{background:#eee;color:#333}
-.stage{background:#fff;border:2px solid #0E7A5F;border-radius:10px;padding:12px;text-align:center;font-weight:700;margin:6px 0}
-.arrow{text-align:center;font-size:20px;color:#0E7A5F}
+.btn-p{background:#102845;color:#fff;border-bottom:3px solid #E8B62A}.btn-g{background:#EDEEF2;color:#102845}
+.stage{background:#fff;border:2px solid #102845;border-radius:10px;padding:12px;text-align:center;font-weight:700;margin:6px 0}
+.stage small{color:#8A6D1B;font-weight:400}
+.arrow{text-align:center;font-size:20px;color:#C8962E;font-weight:900}
 .pill{display:inline-block;padding:6px 12px;border-radius:20px;font-size:14px;font-weight:700;margin:4px}
-.done{background:#E6F4EA;color:#0E7A5F}.waiting{background:#FEF0DC;color:#E8830C}.stuck{background:#FDE8E8;color:#D93D3D}
-.plan-start{border-left:6px solid #0E7A5F}.plan-next{border-left:6px solid #999}.plan-later{border-left:6px solid #ddd;opacity:.9}
-.timeline{border-left:3px solid #0E7A5F;margin-left:10px;padding-left:16px}
+.done{background:#E6EDF5;color:#102845}.waiting{background:#FEF0DC;color:#9A6200}.stuck{background:#FDE8E8;color:#B42323}
+.plan-start{border-left:6px solid #E8B62A;background:#FFFEF7}.plan-next{border-left:6px solid #102845}.plan-later{border-left:6px solid #ddd;opacity:.9}
+.timeline{border-left:3px solid #E8B62A;margin-left:10px;padding-left:16px}
 .hint{color:#666;font-size:14px}
+.badge{display:inline-block;background:#E8B62A;color:#102845;font-size:12px;font-weight:800;padding:4px 10px;border-radius:20px}
 </style>
 </head>
 <body>
 <div class="wrap">
-<h1>PrimeDesk Design System v1 — Preview</h1>
-<p class="hint">Double-clicked file? Good. This is exactly how the MVP will look. Review colors, buttons, cards. Tell us Keep / Change.</p>
+<div class="topnote"><b>PrimeDesk</b> — Business Driver &nbsp; <span class="badge">BUSINESS NAVY + GOLD v2</span><br><small>Navy = trust, structure. Gold = growth, ambition, entrepreneurship.</small></div>
+<h1>Design System v2 — Preview</h1>
+<p class="hint">Double-click file review. New theme: no green. Navy for business, gold for entrepreneurship.</p>
 
 <h2>1. Colors</h2>
 <div class="swatches">
-<div class="sw"><div style="background:#0E7A5F"></div><p>Primary Green #0E7A5F<br>Main buttons</p></div>
-<div class="sw"><div style="background:#1A1D21"></div><p>Charcoal #1A1D21<br>Text</p></div>
-<div class="sw"><div style="background:#F7F8F7;border-bottom:1px solid #ddd"></div><p>Off-white #F7F8F7<br>Background</p></div>
-<div class="sw"><div style="background:#FFC53D"></div><p>Yellow #FFC53D<br>Attention only</p></div>
-<div class="sw"><div style="background:#E8830C"></div><p>Orange Waiting</p></div>
-<div class="sw"><div style="background:#D93D3D"></div><p>Red Stuck</p></div>
+<div class="sw"><div style="background:#102845"></div><p>Business Navy #102845<br>Main buttons, headers</p></div>
+<div class="sw"><div style="background:#E8B62A"></div><p>Entrepreneur Gold #E8B62A<br>Accents, timeline, highlights</p></div>
+<div class="sw"><div style="background:#0B1D33"></div><p>Deep Navy #0B1D33<br>Top bar, footer</p></div>
+<div class="sw"><div style="background:#FAF8F3;border-bottom:1px solid #ddd"></div><p>Warm Paper #FAF8F3<br>Background</p></div>
+<div class="sw"><div style="background:#1A1D21"></div><p>Charcoal Text</p></div>
+<div class="sw"><div style="background:#B42323"></div><p>Red Stuck only</p></div>
 </div>
 
 <h2>2. Buttons</h2>
-<div class="card"><button class="btn btn-p">Continue → (48px tall, thumb friendly)</button><button class="btn btn-g">← Back (ghost)</button></div>
+<div class="card"><button class="btn btn-p">Continue → (Navy + gold underline)</button><button class="btn btn-g">← Back</button><p class="hint">Primary action always navy. Gold line = forward momentum.</p></div>
 
 <h2>3. Process Map (Screen 4)</h2>
-<div class="card"><div class="stage">Enquiry (WhatsApp)</div><div class="arrow">↓</div><div class="stage">Price / Quote</div><div class="arrow">↓</div><div class="stage">Payment (Transfer)</div><div class="arrow">↓</div><div class="stage">Assign Staff</div></div>
+<div class="card"><div class="stage">Enquiry <small>(WhatsApp)</small></div><div class="arrow">↓</div><div class="stage">Price / Quote</div><div class="arrow">↓</div><div class="stage">Payment <small>(Transfer)</small></div><div class="arrow">↓</div><div class="stage">Assign Staff</div></div>
 
 <h2>4. Status Pills (Screen 6)</h2>
-<div class="card"><span class="pill done">Done ✓</span><span class="pill waiting">Waiting ●</span><span class="pill stuck">Stuck ! Needs attention</span><p class="hint">Owner taps to change. Plain words, no tech errors.</p></div>
+<div class="card"><span class="pill done">Done ✓</span><span class="pill waiting">Waiting ●</span><span class="pill stuck">Stuck ! Needs attention</span><p class="hint">Done = navy tint (professional), not bright green. Waiting = gold/brown. Stuck = red only when action needed.</p></div>
 
 <h2>5. Plan Cards (Screen 5)</h2>
-<div class="card plan-start"><b>START NOW — Good for today</b><br>✓ WhatsApp Business — for messages<br>✓ Simple list — for records<br>✓ Payment you use — for money<p class="hint">Why this? No new stress.</p></div>
+<div class="card plan-start"><span class="badge">START NOW</span><br><br><b>Good for you today</b><br>✓ WhatsApp Business — for messages<br>✓ Simple list — for records<br>✓ Payment you use — for money<p class="hint">Gold left border = opportunity. Why this? No new stress.</p></div>
 <div class="card plan-next"><b>NEXT WHEN YOU GROW</b><br>○ Customer list + Scheduling<br><span class="hint">Add when &gt;30 customers/week</span></div>
 <div class="card plan-later"><b>LATER — Ignore for now</b><br>○ Full CRM + automation</div>
 
 <h2>6. Growth Path (Tab 3)</h2>
-<div class="card"><div class="timeline"><p><b>TODAY ✓</b><br>WhatsApp + List + Payment — good now</p><p><b>NEXT</b><br>List + Scheduling — when volume grows</p><p><b>FUTURE</b><br>CRM + automation — when follow-up hard</p></div></div>
+<div class="card"><div class="timeline"><p><b>TODAY ✓</b><br>WhatsApp + List + Payment — solid foundation</p><p><b>NEXT — Scale</b><br>List + Scheduling — when volume grows</p><p><b>FUTURE — Lead</b><br>CRM + automation — when you lead the market</p></div></div>
 
 <h2>7. How to review</h2>
-<div class="card"><p>1. Are colors trustworthy? 2. Is text big enough on your phone? 3. Do you understand Done/Waiting/Stuck? 4. Would a salon owner finish this?</p><p>Tell us: <b>Keep All / Change Colors / Change Words / Change Layout</b></p></div>
+<div class="card"><p>1. Does navy + gold feel like business/entrepreneurship? 2. Is gold enough or too much? 3. Big enough on your phone in sunlight?</p><p>Reply: <b>Keep Navy+Gold / More Gold / Less Gold / Try Blue-Only</b></p></div>
 </div>
 </body>
 </html>
