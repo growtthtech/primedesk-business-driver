@@ -1,24 +1,21 @@
-# PrimeDesk Design System v3 — Light Business (Review Guide)
+# PrimeDesk Design System v4 — Light + Growth Green + Action Orange
 
 Open `DESIGN-PREVIEW.html` (double-click it).
 
-**Change v2 → v3 (lighter):** White page #FFFFFF, Mist sections #F8FAFD, thin 1.5px borders #E6EAF0, bigger radius 14-16px, soft shadows, more padding. Navy dark #102845 replaced with brighter Business Blue #1A56DB used ONLY on primary button. Gold softened to champagne #F6C453 used only for badges, Start Now border, timeline.
+**Change v3 → v4:**
+- **Growth = light green family:** card bg #F2FBF4, Today box #DFF5E3 / border #A9DFBF / text #1B7A3D, timeline line #34A853. Feels fresh, alive, progressing. Used ONLY in Growth Path + Next steps.
+- **Start Now = urgency Action Orange #E8590C:** 2px orange border, orange badge "⚡ START NOW — Do this today", orange button "Start Now → Build My System" with soft orange shadow. Words use today/now/don't miss. This is the ONLY place orange appears, so eye is pulled there first.
+- Rest stays light v3: white page, Business Blue #1A56DB for normal Continue, thin borders.
 
-## Why lighter works for business
-- Feels open, clean, modern — like a new shop, not a bank vault.
-- Easier in sunlight on cheap Androids (less dark ink).
-- Gold still says entrepreneurship/success but doesn't shout.
+## Why this works
+- Orange = psychological urgency/action (like Shop Now, Limited). People tap faster.
+- Light green = growth/safety/progress (like farm growing). People feel calm about future.
+- Separation avoids confusion: orange = act today, green = where you're growing to, blue = normal navigation.
 
-## Colors
-- Blue #1A56DB: primary button only + Done pill text.
-- Soft Gold #F6C453 / light bg #FFF8E1 / border #F0D97A: highlights only.
-- Mist #F8FAFD: section backgrounds.
-- Text #2B3440 softer charcoal, Hint #7A8699.
-- Status pastel: Done #EDF3FE, Waiting #FFF8E1, Stuck #FFF1F1 with thin outlines.
-
-## Components
-Same 7 parts, lighter style: 14px radius, 15px button padding, stage boxes light blue-grey, arrows thin gold, timeline 2px gold.
+## Tokens to lock for `/web`
+- `--action: #E8590C, --action-dark: #C94A08, --action-bg: #FFF7F0`
+- `--growth-bg: #F2FBF4, --growth-box: #DFF5E3, --growth-border: #A9DFBF, --growth-line: #34A853, --growth-text: #1B7A3D`
+- `--primary: #1A56DB, --ink: #2B3440, --mist: #F8FAFD, --line: #E6EAF0`
 
 ## Review
-Reply: Keep Light v3 / Even Lighter (more white, remove shadows) / Add a little more color (stronger blue headers).
-Next: lock Tailwind tokens to these hex codes for `/web`.
+Reply: Keep Orange+Green / Softer Orange (#F07B3F) / Stronger Green (#1E9E4A line).
