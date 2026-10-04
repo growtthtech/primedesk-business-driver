@@ -3,8 +3,8 @@ import Link from "next/link";
 export default function Landing() {
   return (
     <div className="fade-in">
-      {/* HERO — full-bleed dark, cinematic split */}
-      <section className="full-bleed" style={{ background: "#0B1D33", color: "#fff" }}>
+      {/* HERO — full-bleed dark, pulled up flush under the navbar (no gap) */}
+      <section className="full-bleed" style={{ background: "#0B1D33", color: "#fff", marginTop: -16, paddingTop: 8 }}>
         <div className="bleed-inner">
           <span style={{ background: "#E8590C", color: "#fff", fontSize: 12, fontWeight: 800, padding: "4px 12px", borderRadius: 20 }}>🚗 YOUR BUSINESS UBER</span>
           <h1 style={{ fontSize: 40, margin: "14px 0 0", lineHeight: 1.08, letterSpacing: -0.5 }}>
