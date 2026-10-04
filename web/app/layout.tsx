@@ -3,38 +3,41 @@ import Link from "next/link";
 
 export const metadata = { title: "PrimeDesk - Business Driver", description: "Process-first guidance for Nigeria SMEs" };
 
+const links = [
+  { href: "/#how", label: "How it works" },
+  { href: "/map", label: "My Map" },
+  { href: "/plan", label: "My Plan" },
+  { href: "/home", label: "My Home" },
+];
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <div style={{ maxWidth: 520, margin: "0 auto", padding: 16, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-          <header
-            style={{
-              background: "#F2F6FB",
-              border: "1px solid #DDE7F3",
-              borderRadius: 16,
-              padding: "12px 16px",
-              marginBottom: 12,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Link href="/" style={{ textDecoration: "none", color: "#1A3A5C", fontWeight: 800, fontSize: 18 }}>
-              PrimeDesk <span style={{ fontWeight: 400, fontSize: 12, color: "#5B6B80" }}>Business Driver</span>
-            </Link>
-            <div style={{ display: "flex", gap: 8 }}>
-              <Link href="/login" style={{ color: "#1A56DB", padding: "8px 10px", textDecoration: "none", fontSize: 14, fontWeight: 700 }}>
+      <body style={{ margin: 0 }}>
+        {/* FULL-WIDTH NAVBAR: logo left, links middle, Login + Start right */}
+        <header style={{ background: "#0B1D33", position: "sticky", top: 0, zIndex: 20 }}>
+          <div style={{ maxWidth: 1024, margin: "0 auto", padding: "12px 16px", display: "flex", alignItems: "center", gap: 16 }}>
+            <Link href="/" style={{ textDecoration: "none", color: "#fff", fontWeight: 800, whiteSpace: "nowrap" }}>🚗 PrimeDesk</Link>
+            <nav className="nav-links" style={{ flex: 1, justifyContent: "center", gap: 20, fontSize: 13 }}>
+              {links.map((l) => (
+                <Link key={l.href} href={l.href} style={{ color: "#B9C6D8", textDecoration: "none", whiteSpace: "nowrap" }}>
+                  {l.label}
+                </Link>
+              ))}
+            </nav>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", marginLeft: "auto" }}>
+              <Link href="/login" style={{ color: "#fff", border: "1px solid #3A5068", padding: "8px 12px", borderRadius: 10, textDecoration: "none", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap" }}>
                 Log in
               </Link>
-              <Link href="/start" style={{ background: "#1A56DB", color: "#fff", padding: "8px 14px", borderRadius: 10, textDecoration: "none", fontSize: 14, fontWeight: 700 }}>
+              <Link href="/start" style={{ background: "#E8590C", color: "#fff", padding: "8px 14px", borderRadius: 10, textDecoration: "none", fontSize: 13, fontWeight: 800, whiteSpace: "nowrap" }}>
                 Start →
               </Link>
             </div>
-          </header>
+          </div>
+        </header>
 
+        <div style={{ maxWidth: 520, margin: "0 auto", padding: 16, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
           <main style={{ flex: 1 }}>{children}</main>
-
           <footer style={{ textAlign: "center", color: "#7A8699", fontSize: 12, padding: "20px 0 8px" }}>
             Process first • Built for Nigeria SMEs • <Link href="/home" style={{ color: "#1A56DB" }}>My Home</Link>
           </footer>

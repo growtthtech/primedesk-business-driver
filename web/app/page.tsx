@@ -1,26 +1,8 @@
 import Link from "next/link";
 
-const nav = [
-  { href: "#how", label: "How it works" },
-  { href: "#who", label: "Who it's for" },
-  { href: "#why", label: "Why PrimeDesk" },
-  { href: "#faq", label: "FAQ" },
-];
-
 export default function Landing() {
   return (
     <div className="fade-in">
-      {/* NAV — logo left, links center, CTA right (reference style) */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 10, background: "#0B1D33", borderRadius: 16, padding: "12px 16px", marginBottom: 12, display: "flex", alignItems: "center", gap: 12 }}>
-        <Link href="/" style={{ textDecoration: "none", color: "#fff", fontWeight: 800, whiteSpace: "nowrap" }}>🚗 PrimeDesk</Link>
-        <div style={{ display: "flex", gap: 12, flex: 1, overflowX: "auto", fontSize: 13 }}>
-          {nav.map((n) => (
-            <a key={n.href} href={n.href} style={{ color: "#B9C6D8", textDecoration: "none", whiteSpace: "nowrap" }}>{n.label}</a>
-          ))}
-        </div>
-        <Link href="/start" style={{ background: "#E8590C", color: "#fff", padding: "10px 16px", borderRadius: 10, textDecoration: "none", fontSize: 13, fontWeight: 800, whiteSpace: "nowrap" }}>REQUEST RIDE</Link>
-      </nav>
-
       {/* HERO — cinematic split like the reference: headline left, visual right */}
       <div style={{ background: "#0B1D33", borderRadius: 20, overflow: "hidden", color: "#fff" }}>
         <div style={{ padding: "38px 24px 8px" }}>

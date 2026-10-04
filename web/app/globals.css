@@ -34,3 +34,5 @@ body { background: #fff; color: var(--ink); font-family: Inter, Arial, sans-seri
 .pill-stuck { background: #FFF1F1; color: #C03636; border-color: #F3C2C2; }
 .badge-action { background: var(--action); color: #fff; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px; }
 .badge-growth { background: var(--growth-box); color: var(--growth-text); font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--growth-border); }
+.nav-links { display: none; }
+@media (min-width: 640px) { .nav-links { display: flex; } }
