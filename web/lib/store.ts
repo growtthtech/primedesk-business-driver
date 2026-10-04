@@ -11,6 +11,7 @@ export type BizState = {
   tools: Record<string, string>; // tool name -> "yes" | "later"
   level: string;
   levelWhy: string;
+  started: boolean; // true once owner passes Start step 1 (gate for Map/Plan/Drive)
 };
 
 const KEY = "primedesk_state_v1";
@@ -27,6 +28,7 @@ export const defaultState: BizState = {
   tools: {},
   level: "",
   levelWhy: "",
+  started: false,
 };
 
 export function loadState(): BizState {

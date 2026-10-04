@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ProgressBar from "../../components/ProgressBar";
 import BottomNav from "../../components/BottomNav";
@@ -14,6 +14,15 @@ const templates: Record<string, any> = { booking, orders, followup };
 export default function PlanPage() {
   const router = useRouter();
   const [biz, setBiz] = useState(() => loadState());
+  const [allowed, setAllowed] = useState(false);
+
+  // Gate: only owners who started (/start) may see the plan.
+  useEffect(() => {
+    const s = loadState();
+    if (!s.started || s.stages.length === 0) router.push("/start");
+    else setAllowed(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const tpl = templates[biz.templateKey] || booking;
   const lv = getLevel(biz.how || "");
 
@@ -29,6 +38,8 @@ export default function PlanPage() {
     saveState({ ...biz, level: lv.level, levelWhy: lv.why });
     router.push("/drive");
   }
+
+  if (!allowed) return null;
 
   return (
     <div className="fade-in">

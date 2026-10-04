@@ -15,7 +15,7 @@ export default function StartPage() {
   const [biz, setBiz] = useState(() => loadState());
 
   function pick(key: string) {
-    const next = { ...biz, templateKey: key, stages: [...templates[key].stages] };
+    const next = { ...biz, started: true, templateKey: key, stages: [...templates[key].stages] };
     setBiz(next);
     saveState(next);
     setSub(3);
@@ -62,7 +62,7 @@ export default function StartPage() {
             </select>
           </label>
           <div style={{ height: 12 }} />
-          <button className="btn-primary" onClick={() => { saveState(biz); setSub(2); }}>Continue →</button>
+          <button className="btn-primary" onClick={() => { const n = { ...biz, started: true }; setBiz(n); saveState(n); setSub(2); }}>Continue →</button>
         </div>
       )}
 

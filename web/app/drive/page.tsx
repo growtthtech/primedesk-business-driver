@@ -24,8 +24,21 @@ export default function HomePage() {
     saveState(s);
   }
 
-  const { data: session } = authClient.useSession();
-  useEffect(() => {}, [session]);
+  const { data: session, isPending } = authClient.useSession();
+  const [allowed, setAllowed] = useState(false);
+
+  // Gate: logged in OR started trip may enter. Fresh visitors go to /start.
+  useEffect(() => {
+    if (isPending) return;
+    const s = loadState();
+    if (session || s.started) {
+      if (!s.started && session) { const n = { ...s, started: true }; saveState(n); setBiz(n); }
+      setAllowed(true);
+    } else {
+      router.push("/start");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPending]);
   const stuck = biz.stages.filter((s) => (biz.statuses[s] || "Waiting") === "Stuck").length;
   const done = biz.stages.filter((s) => (biz.statuses[s] || "Waiting") === "Done").length;
 
@@ -34,6 +47,8 @@ export default function HomePage() {
       🚗 <b>Riding as guest.</b> <Link href="/login">Log in</Link> to keep this trip saved on every phone.
     </div>
   ) : null;
+
+  if (!allowed) return null;
 
   return (
     <div className="fade-in">

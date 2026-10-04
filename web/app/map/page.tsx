@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProgressBar from "../../components/ProgressBar";
@@ -8,13 +8,15 @@ import { loadState, saveState } from "../../lib/store";
 
 export default function MapPage() {
   const router = useRouter();
-  const [biz, setBiz] = useState(() => {
-    const s = loadState();
-    if (s.stages.length === 0) {
-      s.stages = ["Enquiry (WhatsApp)", "Price / Quote", "Payment (Transfer)", "Book Time", "Do Service", "Follow-up"];
-    }
-    return s;
-  });
+  const [biz, setBiz] = useState(() => loadState());
+  const [allowed, setAllowed] = useState(false);
+
+  // Gate: only owners who started (/start) may see the map.
+  useEffect(() => {
+    if (!biz.started || biz.stages.length === 0) router.push("/start");
+    else setAllowed(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [fresh, setFresh] = useState("");
   const [saved, setSaved] = useState("");
 
@@ -41,6 +43,8 @@ export default function MapPage() {
     }
     setTimeout(() => router.push("/plan"), 600);
   }
+
+  if (!allowed) return null;
 
   return (
     <div className="fade-in">
