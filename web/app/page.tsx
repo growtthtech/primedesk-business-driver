@@ -10,40 +10,52 @@ const nav = [
 export default function Landing() {
   return (
     <div className="fade-in">
-      {/* NAV */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 10, background: "rgba(255,255,255,.95)", border: "1px solid #E6EAF0", borderRadius: 16, padding: "10px 14px", marginBottom: 12, display: "flex", alignItems: "center", gap: 12 }}>
-        <Link href="/" style={{ textDecoration: "none", color: "#1A3A5C", fontWeight: 800, whiteSpace: "nowrap" }}>🚗 PrimeDesk</Link>
+      {/* NAV — logo left, links center, CTA right (reference style) */}
+      <nav style={{ position: "sticky", top: 0, zIndex: 10, background: "#0B1D33", borderRadius: 16, padding: "12px 16px", marginBottom: 12, display: "flex", alignItems: "center", gap: 12 }}>
+        <Link href="/" style={{ textDecoration: "none", color: "#fff", fontWeight: 800, whiteSpace: "nowrap" }}>🚗 PrimeDesk</Link>
         <div style={{ display: "flex", gap: 12, flex: 1, overflowX: "auto", fontSize: 13 }}>
           {nav.map((n) => (
-            <a key={n.href} href={n.href} style={{ color: "#1A3A5C", textDecoration: "none", whiteSpace: "nowrap" }}>{n.label}</a>
+            <a key={n.href} href={n.href} style={{ color: "#B9C6D8", textDecoration: "none", whiteSpace: "nowrap" }}>{n.label}</a>
           ))}
         </div>
-        <Link href="/start" style={{ background: "#E8590C", color: "#fff", padding: "8px 14px", borderRadius: 10, textDecoration: "none", fontSize: 13, fontWeight: 800, whiteSpace: "nowrap" }}>Request ride →</Link>
+        <Link href="/start" style={{ background: "#E8590C", color: "#fff", padding: "10px 16px", borderRadius: 10, textDecoration: "none", fontSize: 13, fontWeight: 800, whiteSpace: "nowrap" }}>REQUEST RIDE</Link>
       </nav>
 
-      {/* UBER-STYLE HERO */}
-      <div className="card" style={{ padding: "28px 20px", background: "#0B1D33", border: "1px solid #0B1D33", color: "#fff" }}>
-        <span style={{ background: "#E8590C", color: "#fff", fontSize: 12, fontWeight: 800, padding: "4px 12px", borderRadius: 20 }}>🚗 YOUR BUSINESS UBER</span>
-        <h1 style={{ fontSize: 30, margin: "14px 0 8px", lineHeight: 1.15, color: "#fff" }}>Where to, boss?</h1>
-        <p style={{ margin: 0, fontSize: 16, color: "#E8B62A", fontWeight: 700 }}>Drive your business to the desired destination with the perfect digital tools.</p>
-        <p style={{ fontSize: 14, color: "#B9C6D8" }}>No tech degree. No oversold software. Just tell us how you work — we handle the driving.</p>
-
-        {/* TRIP CARD */}
-        <div style={{ background: "#fff", borderRadius: 14, padding: 14, marginTop: 14, color: "#2B3440" }}>
-          <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 4 }}>
-              <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#1A56DB" }} />
-              <span style={{ width: 2, height: 26, background: "#E6EAF0" }} />
-              <span style={{ width: 10, height: 10, background: "#E8590C" }} />
-            </div>
-            <div style={{ flex: 1, fontSize: 13 }}>
-              <p style={{ margin: "0 0 12px" }}><span style={{ color: "#7A8699" }}>FROM — where you are</span><br /><b>Scattered chats, notebook, missed bookings</b></p>
-              <p style={{ margin: 0 }}><span style={{ color: "#7A8699" }}>TO — your destination</span><br /><b>Clear process, right tools, steady growth 🌱</b></p>
-            </div>
+      {/* HERO — cinematic split like the reference: headline left, visual right */}
+      <div style={{ background: "#0B1D33", borderRadius: 20, overflow: "hidden", color: "#fff" }}>
+        <div style={{ padding: "38px 24px 8px" }}>
+          <h1 style={{ fontSize: 40, margin: 0, lineHeight: 1.08, letterSpacing: -0.5 }}>
+            Your Business,<br />Driven to Its <span style={{ color: "#E8B62A" }}>Destination.</span>
+          </h1>
+          <div style={{ borderLeft: "4px solid #E8590C", paddingLeft: 16, marginTop: 18 }}>
+            <p style={{ margin: 0, fontSize: 15, color: "#D7E0EC", lineHeight: 1.6 }}>
+              Drive your business to the desired destination with the perfect digital tools.
+              Tell us how you work — we map your process, pick right-sized tools, and show what can wait.
+            </p>
           </div>
-          <Link href="/start" className="btn-action" style={{ display: "block", textDecoration: "none", marginTop: 12, textAlign: "center" }}>Request my ride — free, 10 mins →</Link>
+          <div style={{ display: "flex", gap: 10, marginTop: 22, flexWrap: "wrap" }}>
+            <Link href="/start" style={{ background: "#E8590C", color: "#fff", padding: "15px 28px", borderRadius: 12, textDecoration: "none", fontSize: 15, fontWeight: 800, boxShadow: "0 6px 22px rgba(232,89,12,.45)" }}>REQUEST MY RIDE</Link>
+            <a href="#how" style={{ border: "1px solid #3A5068", color: "#fff", padding: "15px 22px", borderRadius: 12, textDecoration: "none", fontSize: 14 }}>See how it works</a>
+          </div>
+          <p style={{ fontSize: 12, color: "#8FA0B8", margin: "14px 0 0" }}>✓ Free pilot for first 20 &nbsp;•&nbsp; ✓ 10 minutes &nbsp;•&nbsp; ✓ Nothing forced</p>
         </div>
-        <p style={{ fontSize: 12, color: "#B9C6D8", textAlign: "center", margin: "10px 0 0" }}>✓ Free pilot for first 20 businesses &nbsp;•&nbsp; ✓ Nothing forced &nbsp;•&nbsp; <Link href="/login" style={{ color: "#E8B62A" }}>Log in</Link></p>
+
+        {/* VISUAL — night-route panel blending into the dark (like the reference photo) */}
+        <div style={{ margin: "22px 14px 14px", borderRadius: 16, padding: "20px 18px", background: "linear-gradient(135deg, #14294A 0%, #1A3A5C 45%, #4A2C10 100%)", border: "1px solid #2A435F", position: "relative", overflow: "hidden" }}>
+          <div style={{ position: "absolute", top: -40, right: -40, width: 180, height: 180, borderRadius: "50%", background: "radial-gradient(circle, rgba(232,182,42,.35), transparent 70%)" }} />
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ background: "#1A56DB", color: "#fff", fontSize: 11, fontWeight: 800, padding: "5px 10px", borderRadius: 20 }}>● FROM — scattered chats</span>
+          </div>
+          <div style={{ marginLeft: 12, borderLeft: "2px dashed #E8B62A", height: 34, marginTop: 6, marginBottom: 6, position: "relative" }}>
+            <span style={{ position: "absolute", top: 6, left: 10, fontSize: 20 }}>🚗💨</span>
+          </div>
+          <div><span style={{ background: "#E8590C", color: "#fff", fontSize: 11, fontWeight: 800, padding: "5px 10px", borderRadius: 4 }}>■ TO — clear process, steady growth 🌱</span></div>
+          <div style={{ display: "flex", gap: 8, marginTop: 16, flexWrap: "wrap" }}>
+            <span style={{ background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.2)", fontSize: 12, padding: "7px 12px", borderRadius: 20 }}>✓ Map confirmed</span>
+            <span style={{ background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.2)", fontSize: 12, padding: "7px 12px", borderRadius: 20 }}>+12 repeat customers</span>
+            <span style={{ background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.2)", fontSize: 12, padding: "7px 12px", borderRadius: 20 }}>No CRM forced</span>
+          </div>
+        </div>
       </div>
 
       {/* TRUST STRIP */}
@@ -133,7 +145,7 @@ export default function Landing() {
       <div className="card" style={{ textAlign: "center", background: "#0B1D33", border: "1px solid #0B1D33", color: "#fff" }}>
         <h2 style={{ marginTop: 0, color: "#fff" }}>Your destination is waiting. 🚗💨</h2>
         <p style={{ color: "#B9C6D8" }}>Join the first 20 pilot businesses. Free map + plan.</p>
-        <Link href="/start" className="btn-action" style={{ display: "block", textDecoration: "none" }}>⚡ Request my ride — free</Link>
+        <Link href="/start" className="btn-action" style={{ display: "block", textDecoration: "none" }}>⚡ REQUEST MY RIDE — FREE</Link>
       </div>
     </div>
   );
