@@ -17,7 +17,11 @@
   --growth-text: #1B7A3D;
 }
 
-body { background: #fff; color: var(--ink); font-family: Inter, Arial, sans-serif; }
+body { background: #fff; color: var(--ink); font-family: var(--font-inter), Arial, sans-serif; font-weight: 400; }
+h1 { font-family: var(--font-sora), var(--font-inter), sans-serif; font-weight: 800; letter-spacing: -0.5px; }
+h2 { font-family: var(--font-sora), var(--font-inter), sans-serif; font-weight: 700; }
+h3, b, strong { font-weight: 700; }
+button { font-family: var(--font-inter), Arial, sans-serif; }
 .btn-primary { background: var(--primary); color: #fff; border-radius: 14px; padding: 15px; font-weight: 700; width: 100%; border: 0; font-size: 16px; cursor: pointer; }
 .btn-action { background: var(--action); color: #fff; border-radius: 14px; padding: 15px; font-weight: 700; width: 100%; border: 0; font-size: 16px; cursor: pointer; box-shadow: 0 4px 14px rgba(232,89,12,.35); }
 .btn-ghost { background: #F2F4F7; color: #1A3A5C; border: 1px solid var(--line); border-radius: 14px; padding: 15px; width: 100%; font-size: 16px; cursor: pointer; }

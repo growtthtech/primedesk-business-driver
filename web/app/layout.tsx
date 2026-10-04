@@ -1,5 +1,11 @@
 import "./globals.css";
 import Link from "next/link";
+import { Sora, Inter } from "next/font/google";
+
+// Sora = main headlines (600 semibold subheads, 700 bold, 800 extrabold hero)
+// Inter = everything else (400 body, 500 hints, 600 labels, 700 buttons, 800 badges)
+const sora = Sora({ subsets: ["latin"], weight: ["400", "600", "700", "800"], variable: "--font-sora" });
+const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-inter" });
 
 export const metadata = { title: "PrimeDesk - Business Driver", description: "Process-first guidance for Nigeria SMEs" };
 
@@ -12,8 +18,8 @@ const links = [
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body style={{ margin: 0 }}>
+    <html lang="en" className={`${sora.variable} ${inter.variable}`}>
+      <body style={{ margin: 0, fontFamily: "var(--font-inter), Arial, sans-serif" }}>
         {/* FULL-WIDTH NAVBAR: logo left, links middle, Login + Start right */}
         <header style={{ background: "#0B1D33", position: "sticky", top: 0, zIndex: 20 }}>
           <div style={{ maxWidth: 1024, margin: "0 auto", padding: "12px 16px", display: "flex", alignItems: "center", gap: 16 }}>
