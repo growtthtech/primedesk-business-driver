@@ -4,7 +4,9 @@ import Link from "next/link";
 import ProgressBar from "../../components/ProgressBar";
 import BottomNav from "../../components/BottomNav";
 import { loadState, saveState, clearState } from "../../lib/store";
+import { authClient } from "../../lib/auth-client";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const order = ["Waiting", "Done", "Stuck"];
 const pill: Record<string, string> = { Waiting: "pill-waiting", Done: "pill-done", Stuck: "pill-stuck" };
@@ -22,12 +24,21 @@ export default function HomePage() {
     saveState(s);
   }
 
+  const { data: session } = authClient.useSession();
+  useEffect(() => {}, [session]);
   const stuck = biz.stages.filter((s) => (biz.statuses[s] || "Waiting") === "Stuck").length;
   const done = biz.stages.filter((s) => (biz.statuses[s] || "Waiting") === "Done").length;
+
+  const banner = !session ? (
+    <div style={{ background: "#FFF7F0", border: "1.5px solid #E8590C", borderRadius: 12, padding: 12, marginBottom: 8 }}>
+      🚗 <b>Riding as guest.</b> <Link href="/login">Log in</Link> to keep this trip saved on every phone.
+    </div>
+  ) : null;
 
   return (
     <div className="fade-in">
       <ProgressBar step={5} />
+      {banner}
       <div className="card">
         <h2>{biz.name || "My Business"} Home</h2>
         <p className="hint">{done} Done • {stuck} Stuck{stuck > 0 ? ` — ${stuck} stage${stuck > 1 ? "s need" : " needs"} attention` : " — all calm"}</p>

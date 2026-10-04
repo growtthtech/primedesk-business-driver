@@ -23,9 +23,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/" style={{ textDecoration: "none", color: "#1A3A5C", fontWeight: 800, fontSize: 18 }}>
               PrimeDesk <span style={{ fontWeight: 400, fontSize: 12, color: "#5B6B80" }}>Business Driver</span>
             </Link>
-            <Link href="/start" style={{ background: "#1A56DB", color: "#fff", padding: "8px 14px", borderRadius: 10, textDecoration: "none", fontSize: 14, fontWeight: 700 }}>
-              Start →
-            </Link>
+            <div style={{ display: "flex", gap: 8 }}>
+              <Link href="/login" style={{ color: "#1A56DB", padding: "8px 10px", textDecoration: "none", fontSize: 14, fontWeight: 700 }}>
+                Log in
+              </Link>
+              <Link href="/start" style={{ background: "#1A56DB", color: "#fff", padding: "8px 14px", borderRadius: 10, textDecoration: "none", fontSize: 14, fontWeight: 700 }}>
+                Start →
+              </Link>
+            </div>
           </header>
 
           <main style={{ flex: 1 }}>{children}</main>
