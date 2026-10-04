@@ -18,9 +18,19 @@
 }
 
 body { background: #fff; color: var(--ink); font-family: Inter, Arial, sans-serif; }
-.btn-primary { background: var(--primary); color: #fff; border-radius: 14px; padding: 15px; font-weight: 700; width: 100%; }
-.btn-action { background: var(--action); color: #fff; border-radius: 14px; padding: 15px; font-weight: 700; width: 100%; box-shadow: 0 4px 14px rgba(232,89,12,.35); }
-.btn-ghost { background: #F2F4F7; color: #1A3A5C; border: 1px solid var(--line); border-radius: 14px; padding: 15px; width: 100%; }
+.btn-primary { background: var(--primary); color: #fff; border-radius: 14px; padding: 15px; font-weight: 700; width: 100%; border: 0; font-size: 16px; cursor: pointer; }
+.btn-action { background: var(--action); color: #fff; border-radius: 14px; padding: 15px; font-weight: 700; width: 100%; border: 0; font-size: 16px; cursor: pointer; box-shadow: 0 4px 14px rgba(232,89,12,.35); }
+.btn-ghost { background: #F2F4F7; color: #1A3A5C; border: 1px solid var(--line); border-radius: 14px; padding: 15px; width: 100%; font-size: 16px; cursor: pointer; }
 .card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(26,58,92,.06); }
 .card-action { border: 2px solid var(--action); background: var(--action-bg); }
 .card-growth { background: var(--growth-bg); border: 1.5px solid var(--growth-border); }
+.field { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--line); font-size: 15px; box-sizing: border-box; }
+.hint { color: #7A8699; font-size: 14px; }
+.fade-in { animation: fadeUp .35s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.pill { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; border: 1px solid transparent; cursor: pointer; }
+.pill-done { background: #EDF3FE; color: #1A56DB; border-color: #C9D7EA; }
+.pill-waiting { background: #FFF8E1; color: #8A6D00; border-color: #F0D97A; }
+.pill-stuck { background: #FFF1F1; color: #C03636; border-color: #F3C2C2; }
+.badge-action { background: var(--action); color: #fff; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px; }
+.badge-growth { background: var(--growth-box); color: var(--growth-text); font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--growth-border); }
