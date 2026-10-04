@@ -1,0 +1,15 @@
+# PrimeDesk deploy settings (repo root). Base = web/ subfolder.
+[build]
+  base = "web"
+  command = "npm run build"
+  publish = ".next"
+
+# Next.js server routes (/api/*) run as functions automatically.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Never cache API responses.
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "no-store"
