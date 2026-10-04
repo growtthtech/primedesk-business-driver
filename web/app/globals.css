@@ -36,3 +36,5 @@ body { background: #fff; color: var(--ink); font-family: Inter, Arial, sans-seri
 .badge-growth { background: var(--growth-box); color: var(--growth-text); font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--growth-border); }
 .nav-links { display: none; }
 @media (min-width: 640px) { .nav-links { display: flex; } }
+.full-bleed { width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; }
+.bleed-inner { max-width: 1024px; margin: 0 auto; padding: 28px 16px; }
