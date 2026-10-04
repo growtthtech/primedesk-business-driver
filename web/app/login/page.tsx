@@ -29,7 +29,7 @@ export default function LoginPage() {
     setBusy(false);
     if (res.error) { setMsg("Wrong or expired code. Request a new one."); return; }
     setMsg("Welcome aboard! Taking you home...");
-    setTimeout(() => router.push("/home"), 600);
+    setTimeout(() => router.push("/drive"), 600);
   }
 
   return (

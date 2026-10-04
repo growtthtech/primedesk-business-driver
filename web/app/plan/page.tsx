@@ -27,7 +27,7 @@ export default function PlanPage() {
 
   function build() {
     saveState({ ...biz, level: lv.level, levelWhy: lv.why });
-    router.push("/home");
+    router.push("/drive");
   }
 
   return (

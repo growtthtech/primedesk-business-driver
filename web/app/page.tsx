@@ -39,11 +39,24 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* TRUST STRIP */}
+      {/* TRUST — four even cards */}
       <section className="full-bleed" style={{ background: "#fff", borderBottom: "1px solid #E6EAF0" }}>
-        <div className="bleed-inner" style={{ textAlign: "center", padding: "20px 16px" }}>
-          <p className="hint" style={{ margin: 0 }}>RIDING WITH BUSINESSES LIKE</p>
-          <p style={{ fontWeight: 800, color: "#1A3A5C", margin: "8px 0 0" }}>💇 Beauty &nbsp;•&nbsp; 🍲 Food vendors &nbsp;•&nbsp; 👗 Fashion &nbsp;•&nbsp; 🔧 Home services</p>
+        <div className="bleed-inner" style={{ padding: "20px 16px" }}>
+          <p className="hint" style={{ margin: "0 0 12px", textAlign: "center" }}>RIDING WITH BUSINESSES LIKE</p>
+          <div className="grid-even">
+            {[
+              ["💇", "Beauty", "Salons, lashes, spas"],
+              ["🍲", "Food vendors", "Lunch packs, bakers"],
+              ["👗", "Fashion", "Vendors, tailors"],
+              ["🔧", "Home services", "Cleaning, repairs"],
+            ].map(([e, t, d]) => (
+              <div key={t} className="card" style={{ textAlign: "center", padding: 16 }}>
+                <p style={{ fontSize: 28, margin: 0 }}>{e}</p>
+                <b style={{ color: "#1A3A5C" }}>{t}</b>
+                <p className="hint" style={{ margin: "4px 0 0", fontSize: 12 }}>{d}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

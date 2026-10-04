@@ -7,7 +7,7 @@ const links = [
   { href: "/#how", label: "How it works" },
   { href: "/map", label: "My Map" },
   { href: "/plan", label: "My Plan" },
-  { href: "/home", label: "My Home" },
+  { href: "/drive", label: "My Drive" },
 ];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div style={{ maxWidth: 520, margin: "0 auto", padding: 16, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
           <main style={{ flex: 1 }}>{children}</main>
           <footer style={{ textAlign: "center", color: "#7A8699", fontSize: 12, padding: "20px 0 8px" }}>
-            Process first • Built for Nigeria SMEs • <Link href="/home" style={{ color: "#1A56DB" }}>My Home</Link>
+            Process first • Built for Nigeria SMEs • <Link href="/drive" style={{ color: "#1A56DB" }}>My Drive</Link>
           </footer>
         </div>
       </body>

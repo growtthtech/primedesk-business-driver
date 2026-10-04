@@ -21,7 +21,7 @@ body { background: #fff; color: var(--ink); font-family: Inter, Arial, sans-seri
 .btn-primary { background: var(--primary); color: #fff; border-radius: 14px; padding: 15px; font-weight: 700; width: 100%; border: 0; font-size: 16px; cursor: pointer; }
 .btn-action { background: var(--action); color: #fff; border-radius: 14px; padding: 15px; font-weight: 700; width: 100%; border: 0; font-size: 16px; cursor: pointer; box-shadow: 0 4px 14px rgba(232,89,12,.35); }
 .btn-ghost { background: #F2F4F7; color: #1A3A5C; border: 1px solid var(--line); border-radius: 14px; padding: 15px; width: 100%; font-size: 16px; cursor: pointer; }
-.card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(26,58,92,.06); }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin: 12px 0; box-shadow: 0 2px 12px rgba(26,58,92,.06); }
 .card-action { border: 2px solid var(--action); background: var(--action-bg); }
 .card-growth { background: var(--growth-bg); border: 1.5px solid var(--growth-border); }
 .field { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--line); font-size: 15px; box-sizing: border-box; }
@@ -38,3 +38,6 @@ body { background: #fff; color: var(--ink); font-family: Inter, Arial, sans-seri
 @media (min-width: 640px) { .nav-links { display: flex; } }
 .full-bleed { width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; }
 .bleed-inner { max-width: 1024px; margin: 0 auto; padding: 28px 16px; }
+.grid-even { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-even .card { margin: 0; }
+@media (min-width: 720px) { .grid-even { grid-template-columns: repeat(4, 1fr); } }

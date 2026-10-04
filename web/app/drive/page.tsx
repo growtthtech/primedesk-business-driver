@@ -40,7 +40,7 @@ export default function HomePage() {
       <ProgressBar step={5} />
       {banner}
       <div className="card">
-        <h2>{biz.name || "My Business"} Home</h2>
+        <h2>🚗 {biz.name || "My Business"} Drive</h2>
         <p className="hint">{done} Done • {stuck} Stuck{stuck > 0 ? ` — ${stuck} stage${stuck > 1 ? "s need" : " needs"} attention` : " — all calm"}</p>
         <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
           {["Process", "Tools", "Growth"].map((t, i) => (
