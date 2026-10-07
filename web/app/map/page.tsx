@@ -31,10 +31,19 @@ export default function MapPage() {
     saveState(next);
     setSaved("Saving...");
     try {
+      // Attach owned business id when logged in (server verifies ownership).
+      let businessId = "";
+      try {
+        const mine = await fetch("/api/business");
+        if (mine.ok) {
+          const mj = await mine.json();
+          if (mj.ok && mj.business) businessId = mj.business.id;
+        }
+      } catch {}
       const res = await fetch("/api/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...next, level: next.level || "ORGANIZE" }),
+        body: JSON.stringify({ ...next, businessId, level: next.level || "ORGANIZE" }),
       });
       const j = await res.json();
       setSaved(j.ok ? "Saved ✓" : "Saved on this phone (server busy)");

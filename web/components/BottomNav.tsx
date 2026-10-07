@@ -6,6 +6,7 @@ const tabs = [
   { href: "/map", label: "🗺 Map" },
   { href: "/plan", label: "⚡ Plan" },
   { href: "/drive", label: "🚗 Drive" },
+  { href: "/profile", label: "👤 You" },
 ];
 
 export default function BottomNav() {

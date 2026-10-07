@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div style={{ maxWidth: 520, margin: "0 auto", padding: 16, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
           <main style={{ flex: 1 }}>{children}</main>
           <footer style={{ textAlign: "center", color: "#7A8699", fontSize: 12, padding: "20px 0 8px" }}>
-            Process first • Built for Nigeria SMEs • <Link href="/drive" style={{ color: "#1A56DB" }}>My Drive</Link>
+            Process first • Built for Nigeria SMEs • <Link href="/drive" style={{ color: "#1A56DB" }}>My Drive</Link> • <Link href="/profile" style={{ color: "#1A56DB" }}>Profile</Link>
           </footer>
         </div>
       </body>

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ProgressBar from "../../components/ProgressBar";
 import { loadState, saveState } from "../../lib/store";
@@ -13,6 +13,24 @@ export default function StartPage() {
   const router = useRouter();
   const [sub, setSub] = useState(1);
   const [biz, setBiz] = useState(() => loadState());
+
+  // Reuse profile answers so logged-in owners aren't asked twice.
+  useEffect(() => {
+    fetch("/api/business")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (!j?.ok || !j.business) return;
+        setBiz((cur) => {
+          if (cur.name) return cur; // never overwrite what they typed
+          const sizeMap: Record<string, string> = { "Just me": "1-2", "2–5": "3-10", "6–10": "3-10", "11–50": "11-20", "50+": "11-20" };
+          const next = { ...cur, name: j.business.name || cur.name, size: sizeMap[j.business.size] || cur.size };
+          saveState(next);
+          return next;
+        });
+      })
+      .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function pick(key: string) {
     const next = { ...biz, started: true, templateKey: key, stages: [...templates[key].stages] };
