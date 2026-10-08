@@ -36,6 +36,9 @@ button { font-family: var(--font-inter), Arial, sans-serif; }
 .pill-done { background: #EDF3FE; color: #1A56DB; border-color: #C9D7EA; }
 .pill-waiting { background: #FFF8E1; color: #8A6D00; border-color: #F0D97A; }
 .pill-stuck { background: #FFF1F1; color: #C03636; border-color: #F3C2C2; }
+.pill-todo { background: #F2F4F7; color: #5B6B80; border-color: #E6EAF0; }
+.pill-progress { background: #EDF3FE; color: #1A56DB; border-color: #C9D7EA; }
+.pill-mapped { background: #E9F7EF; color: #1B7A3D; border-color: #A9DFBF; }
 .badge-action { background: var(--action); color: #fff; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px; }
 .badge-growth { background: var(--growth-box); color: var(--growth-text); font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--growth-border); }
 .nav-links { display: none; }

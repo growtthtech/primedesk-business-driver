@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CATEGORIES, SIZES, YEARS, validateProfile } from "../../lib/business-categories";
+import { CATEGORIES, SIZES, YEARS, validateProfile, normalizeCategory, normalizeSubtype } from "../../lib/business-categories";
 
 export default function BusinessProfilePage() {
   const router = useRouter();
@@ -23,8 +23,8 @@ export default function BusinessProfilePage() {
         if (!j || !j.ok) { setMsg(j?.error || "We couldn't load your business information. Please try again."); return; }
         if (j.business) {
           setName(j.business.name || "");
-          setCategory(j.business.category || "");
-          setSubtype(j.business.subtype || "");
+          setCategory(normalizeCategory(j.business.category || ""));
+          setSubtype(normalizeSubtype(j.business.subtype || ""));
           setSize(j.business.size || "");
           setYears(j.business.years || "");
           setIsNew(false);

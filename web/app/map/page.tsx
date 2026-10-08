@@ -19,6 +19,33 @@ export default function MapPage() {
   }, []);
   const [fresh, setFresh] = useState("");
   const [saved, setSaved] = useState("");
+  const [mapData, setMapData] = useState<{ business: { name: string }; areas: { id: string; name: string; description: string; processes: { id: string; name: string; description: string; status: string; relevance: string }[] }[]; pendingQuestions: { trait: string; question: string }[] } | null>(null);
+
+  function loadMap() {
+    fetch("/api/my-map")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (j?.ok) setMapData(j); })
+      .catch(() => {});
+  }
+
+  useEffect(() => { if (allowed) loadMap(); }, [allowed]);
+
+  const statusPill: Record<string, string> = { not_started: "pill-todo", in_progress: "pill-progress", mapped: "pill-mapped" };
+  const statusWord: Record<string, string> = { not_started: "Not Started", in_progress: "In Progress", mapped: "Mapped" };
+
+  async function startProcess(pid: string) {
+    try {
+      await fetch("/api/my-map/status", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ processId: pid, status: "in_progress" }) });
+    } catch {}
+    router.push("/start");
+  }
+
+  async function answerTrait(trait: string, answer: boolean) {
+    try {
+      await fetch("/api/my-map/traits", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trait, answer }) });
+    } catch {}
+    loadMap();
+  }
 
   function update(i: number, v: string) {
     const stages = [...biz.stages];
@@ -47,6 +74,14 @@ export default function MapPage() {
       });
       const j = await res.json();
       setSaved(j.ok ? "Saved ✓" : "Saved on this phone (server busy)");
+      // Phase C bridge: mark covered in-progress catalog processes as mapped.
+      try {
+        await fetch("/api/my-map/complete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ templateKey: next.templateKey }),
+        });
+      } catch {}
     } catch {
       setSaved("Saved on this phone ✓ (will sync later)");
     }
@@ -58,6 +93,44 @@ export default function MapPage() {
   return (
     <div className="fade-in">
       <ProgressBar step={4} />
+      {mapData && (
+        <div className="card">
+          <h2>🗺 My Map — {mapData.business.name || "My Business"}</h2>
+          <p className="hint">Where your business stands. Start a process to map it properly.</p>
+          {mapData.pendingQuestions.length > 0 && (
+            <div style={{ background: "#F8FAFD", border: "1px solid #E6EAF0", borderRadius: 12, padding: 12, margin: "8px 0" }}>
+              <b>Quick check — helps us show only what fits:</b>
+              {mapData.pendingQuestions.slice(0, 3).map((q) => (
+                <div key={q.trait} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, padding: "8px 0" }}>
+                  <span style={{ fontSize: 14 }}>{q.question}</span>
+                  <span style={{ display: "flex", gap: 6, whiteSpace: "nowrap" }}>
+                    <button className="btn-ghost" style={{ width: 64, padding: 8 }} onClick={() => answerTrait(q.trait, true)}>Yes</button>
+                    <button className="btn-ghost" style={{ width: 64, padding: 8 }} onClick={() => answerTrait(q.trait, false)}>No</button>
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+          {mapData.areas.map((a) => (
+            <div key={a.id} style={{ marginTop: 12 }}>
+              <b>{a.name}</b>
+              <p className="hint" style={{ margin: "2px 0 8px" }}>{a.processes.length} relevant process{a.processes.length === 1 ? "" : "es"}</p>
+              {a.processes.map((p) => (
+                <div key={p.id} style={{ border: "1px solid #E6EAF0", borderRadius: 12, padding: 12, margin: "8px 0" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                    <b>{p.name}</b>
+                    <span className={`pill ${statusPill[p.status] || "pill-todo"}`}>{statusWord[p.status] || p.status}</span>
+                  </div>
+                  <p className="hint" style={{ margin: "4px 0 8px" }}>{p.description}</p>
+                  <button className="btn-ghost" style={{ padding: 10 }} onClick={() => startProcess(p.id)}>
+                    {p.status === "mapped" ? "Review →" : p.status === "in_progress" ? "Continue →" : "Start →"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
       <div className="card">
         <h2>This is how your business works</h2>
         <p className="hint">Fix names until you can say: “Yes, this is my business.”</p>
