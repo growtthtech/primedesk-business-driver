@@ -34,10 +34,7 @@ export default function MapPage() {
   const statusWord: Record<string, string> = { not_started: "Not Started", in_progress: "In Progress", mapped: "Mapped" };
 
   async function startProcess(pid: string) {
-    try {
-      await fetch("/api/my-map/status", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ processId: pid, status: "in_progress" }) });
-    } catch {}
-    router.push("/start");
+    router.push(`/map/${pid}`);
   }
 
   async function answerTrait(trait: string, answer: boolean) {
