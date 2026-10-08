@@ -96,9 +96,76 @@ regression (auth, profile, journey, aliases). See commit history for results.
 - Template→catalog `complete` bridge kept for the legacy editor path.
 - No test-runner suite (Phase I); verification is live-API based.
 
-### Remaining Phase E requirements
-Phase E can consume per business+process: `workflow[]`, `tools[]`,
-`problems[]`, `need`, `status=mapped`, plus profile (category/subtype/size/
-years) and traits. Needed next: digital-capability mapping + tool database +
-NOW/LATER/FUTURE rules + Plan cards + Drive selection. Nothing in Phase D
-pre-decides tools.
+### Remaining Phase E requirements (now implemented below)
+
+## Phase E — Digital Needs & Recommendations (done)
+
+### Digital capability model
+`digital_capabilities` (id, name, description, category, maturity
+foundational|growing|advanced) linked to processes via `capability_processes`,
+matched by `capability_signals` keywords against the mapped problems + need.
+14 capabilities seeded (communication, records, follow-up, orders, bookings,
+payments, expenses, profit, stock, reorder, marketing, sales, tasks, files).
+
+### Recommendation engine (`lib/recommend.ts`, pure, no AI)
+Per mapped process (skipped when no-problem or no problems):
+Problem → matching capabilities (signal must hit text) → current-tool check
+(`tool_equivalents` substring match → "covered" note, no new tool) → up to 2
+tools each (free + Easy first) → stage from `tool_capabilities.base_stage`,
+bumped one level when tool is Advanced or capability is advanced AND the
+business is small (`Just me`/`2–5`) or young (`< 1 year`). Reasons are built
+from the owner's own process/problems/need words. Priority = pain count +
+stage weight. No signals match → no recommendation (never forced).
+
+### Tool library
+`digital_tools` (15 seeded: honest categories only, no invented prices) +
+`tool_capabilities` (base stages) + `tool_equivalents`. Read API
+`GET /api/tools` (light fields, login required).
+
+### No-recommendation logic
+Empty problems, no-problem mappings, and unmatched signals all yield nothing;
+Plan shows the "doing fine" empty state. Covered capabilities yield a
+keep-using-what-you-have note instead of a tool.
+
+### Current-tool handling
+Mapping's recorded current tools are matched before recommending; covered
+capabilities never produce duplicate software.
+
+## Phase F — My Plan (done)
+`GET /api/plan` regenerates from mapped data on every view (old active rows
+→ superseded; Drive selections untouched), groups NOW/LATER/FUTURE with a
+counts summary. Cards show tool, Best for, Why (traceable reason),
+stage pill, pricing + difficulty, Learn More link, Add to My Drive ↔ Added
+state. Covered notes render as green cards without buttons. Empty state per
+spec. Trace line on every card: process → capability.
+
+## Phase G — My Drive (done)
+`my_drive_selections(business, tool, recommendation?, selected_at)` with
+unique(business, tool) — duplicates return the existing row. `GET /api/drive`
+groups by capability with process trace + selected date; `POST /api/drive`
+validates tool active + recommendation ownership; `POST /api/drive/remove`
+hard-deletes (library + Plan unaffected). Drive holds only explicit choices;
+legacy localStorage ticks are ignored. UI: grouped stack, Open site, View in
+Plan, Remove, spec empty state.
+
+### Security
+Every E–G endpoint resolves the user from the Better Auth session and scopes
+by owned business; foreign ids → 403/404; server validation throughout;
+plain-language errors; no secrets in code or logs.
+
+### Testing (live)
+5 niches with differing recs; bump rule both directions (Zoho FUTURE for
+tiny salon, LATER for 50+ consultancy); covered path (no duplicate Sheets);
+no-force plan (total 0); Drive add/dup/remove/plan-unaffected; isolation
+(null/404/403 ×3 endpoints); full Business→Drive traceability in one SQL
+query; regression (auth, profile, journey, aliases, save).
+
+### Known limitations
+- Plan regenerates per view (fine at pilot scale; cache later if slow).
+- Legacy template ticks ignored by new Drive (documented behavior change).
+- No test-runner suite (Phase I); verification is live-API based.
+
+### Phase H requirements
+PWA (manifest, icons, service worker, installability, offline strategy),
+mobile polish, final UX/security QA, production env + Neon migration check,
+performance review, final docs. No Phase H work done yet.
