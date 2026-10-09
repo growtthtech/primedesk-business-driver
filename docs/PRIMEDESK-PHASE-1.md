@@ -165,7 +165,63 @@ query; regression (auth, profile, journey, aliases, save).
 - Legacy template ticks ignored by new Drive (documented behavior change).
 - No test-runner suite (Phase I); verification is live-API based.
 
-### Phase H requirements
-PWA (manifest, icons, service worker, installability, offline strategy),
-mobile polish, final UX/security QA, production env + Neon migration check,
-performance review, final docs. No Phase H work done yet.
+### Phase H requirements (now implemented below)
+
+## Phase H — Auth, PWA, Production Readiness (done, with external caveats)
+
+### Authentication architecture
+- Better Auth 1.7.7, single architecture extended (not replaced): emailOTP
+  (unchanged) + phoneNumber plugin (passwordless OTP login).
+- Unified `/login` = Start/Login screen: one input accepts email or Nigerian
+  phone (`080…`/`8…`/`+234…` normalized by `lib/phone.ts`), masked destination
+  display, 6-digit code, 30s resend cooldown, change option. Post-verify
+  routing: existing business → `/drive`, else `/business-profile`.
+- Phone users auto-provision with temp email `<digits>@phone.primedesk.local`
+  (plugin design); email and phone remain separate accounts (known limitation).
+- OTP: 6 digits, 10-min expiry, single-use, server rate limiting observed;
+  no OTPs in production logs.
+
+### SMS provider
+`lib/sms.ts` → Termii `api.ng.termii.com/api/sms/send` (generic channel,
+server-side key only). Env-gated: without `TERMII_API_KEY` it pilot-logs
+(local only). Production needs key + approved sender ID (external, pending).
+
+### Environment variables (names only)
+`DATABASE_URL, BETTER_AUTH_SECRET, BETTER_AUTH_URL, ZEPTOMAIL_API_KEY,
+ZEPTOMAIL_FROM, GMAIL_USER, GMAIL_APP_PASSWORD, TERMII_API_KEY,
+TERMII_SENDER_ID, TERMII_CHANNEL`. Secrets never in code/logs/GitHub.
+
+### Database changes
+`migration-phase-h.sql`: `"user"."phoneNumber"` (unique, nullable) +
+`"phoneNumberVerified"` (default false). Applied local + Neon.
+
+### PWA implementation
+- `app/manifest.ts` → `/manifest.webmanifest` (name, short name, standalone,
+  theme `#0B1D33`, 192 + 512 maskable icons).
+- Icons reused from existing brand mark (`public/icons/`, generated pilot set).
+- Hand-written `public/sw.js` (no new packages): app-shell precache,
+  static cache-first, navigations network-first with `/offline` fallback,
+  `/api/*` never cached. `PwaRegister` registers SW + online/offline pill in
+  footer; `InstallButton` surfaces `beforeinstallprompt` on landing.
+- `netlify.toml`: `/sw.js` no-cache (prevents phones stuck on old versions), icons immutable,
+  manifest daily, `/api/*` no-store.
+
+### Route protection / security
+- Server ownership on every user endpoint (Phases B–G re-verified).
+- `/api/email-test` now requires login (was an open mail relay).
+- Parameterized queries throughout; plain-language errors; focus-visible
+  outlines + labeled inputs + `aria-live` status + one-time-code autocomplete.
+
+### Testing (live, local)
+Phone send→verify→session→authed API; bad phone 400; wrong code 400; email
+OTP regression; full B–G regression (business, map, plan, drive, 7 pages
+200); PWA routes (manifest/sw/offline/icons) 200. Test data cleaned.
+
+### Known limitations / external setup still required
+- Termii account + API key + approved sender ID + SMS balance (owner action).
+- Domain + ZeptoMail sender (owner action); Gmail SMTP is the working pilot path.
+- Netlify env vars for any fresh project + redeploy (owner clicks).
+- Rotation of secrets previously pasted in chat (Neon password, ZeptoMail
+  token, Gmail app password) when pilot ends.
+- Responsive spot-checks at 320–430px/768/1024/1280+ and install-prompt UX
+  need a real device pass (owner's phone recommended).
