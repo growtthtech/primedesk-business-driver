@@ -1,4 +1,5 @@
 import Link from "next/link";
+import InstallButton from "../components/InstallButton";
 
 export default function Landing() {
   return (
@@ -21,6 +22,7 @@ export default function Landing() {
             <a href="#how" style={{ border: "1px solid #3A5068", color: "#fff", padding: "15px 22px", borderRadius: 12, textDecoration: "none", fontSize: 14 }}>See how it works</a>
           </div>
           <p style={{ fontSize: 12, color: "#8FA0B8", margin: "14px 0 0" }}>✓ Free pilot for first 20 &nbsp;•&nbsp; ✓ 10 minutes &nbsp;•&nbsp; ✓ Nothing forced</p>
+          <InstallButton />
 
           {/* TRIP VISUAL */}
           <div style={{ marginTop: 22, borderRadius: 16, padding: "20px 18px", background: "linear-gradient(135deg, #14294A 0%, #1A3A5C 45%, #4A2C10 100%)", border: "1px solid #2A435F", position: "relative", overflow: "hidden" }}>

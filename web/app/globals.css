@@ -48,3 +48,4 @@ button { font-family: var(--font-inter), Arial, sans-serif; }
 .grid-even { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .grid-even .card { margin: 0; }
 @media (min-width: 720px) { .grid-even { grid-template-columns: repeat(4, 1fr); } }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3px solid #E8B62A; outline-offset: 2px; }

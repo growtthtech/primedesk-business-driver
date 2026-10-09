@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
 
-// POST { to } -> sends a test email. Proves ZeptoMail is wired before pilot owners arrive.
+// POST { to } -> sends a test email. Login required: prevents open relay abuse.
 export async function POST(req: Request) {
+  const session = await auth.api.getSession({ headers: req.headers }).catch(() => null);
+  if (!session?.user?.id) return NextResponse.json({ ok: false, error: "Please log in first." }, { status: 401 });
   try {
     const { to } = await req.json();
     if (!to || !String(to).includes("@")) {

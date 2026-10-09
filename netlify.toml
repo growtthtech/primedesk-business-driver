@@ -13,3 +13,20 @@
   for = "/api/*"
   [headers.values]
     Cache-Control = "no-store"
+
+# Service worker must always revalidate, or phones get stuck on old app versions.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+# Manifest + icons change rarely; cache them for fast installs.
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"

@@ -1,13 +1,23 @@
 import "./globals.css";
 import Link from "next/link";
+import type { Viewport } from "next";
 import { Sora, Inter } from "next/font/google";
+import PwaRegister from "../components/PwaRegister";
 
 // Sora = main headlines (600 semibold subheads, 700 bold, 800 extrabold hero)
 // Inter = everything else (400 body, 500 hints, 600 labels, 700 buttons, 800 badges)
 const sora = Sora({ subsets: ["latin"], weight: ["400", "600", "700", "800"], variable: "--font-sora" });
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-inter" });
 
-export const metadata = { title: "PrimeDesk - Business Driver", description: "Process-first guidance for Nigeria SMEs" };
+export const metadata = {
+  title: "PrimeDesk - Business Driver",
+  description: "Process-first guidance for Nigeria SMEs",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent" as const, title: "PrimeDesk" },
+  icons: { icon: "/icons/icon-192.png", apple: "/icons/apple-touch-icon.png" },
+};
+
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0B1D33" };
 
 const links = [
   { href: "/#how", label: "How it works" },
@@ -46,6 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main style={{ flex: 1 }}>{children}</main>
           <footer style={{ textAlign: "center", color: "#7A8699", fontSize: 12, padding: "20px 0 8px" }}>
             Process first • Built for Nigeria SMEs • <Link href="/drive" style={{ color: "#1A56DB" }}>My Drive</Link> • <Link href="/profile" style={{ color: "#1A56DB" }}>Profile</Link>
+            <PwaRegister />
           </footer>
         </div>
       </body>
