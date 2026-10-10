@@ -15,8 +15,14 @@ export default function BusinessProfilePage() {
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
   const [isNew, setIsNew] = useState(true);
+  const [allServices, setAllServices] = useState<{ id: string; name: string }[]>([]);
+  const [services, setServices] = useState<string[]>([]);
 
   useEffect(() => {
+    fetch("/api/business-model")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (j?.ok) setAllServices(j.services || []); })
+      .catch(() => {});
     fetch("/api/business")
       .then((r) => (r.status === 401 ? router.push("/login") : r.json()))
       .then((j) => {
@@ -25,6 +31,7 @@ export default function BusinessProfilePage() {
           setName(j.business.name || "");
           setCategory(normalizeCategory(j.business.category || ""));
           setSubtype(normalizeSubtype(j.business.subtype || ""));
+          setServices(j.business.services || []);
           setSize(j.business.size || "");
           setYears(j.business.years || "");
           setIsNew(false);
@@ -38,6 +45,11 @@ export default function BusinessProfilePage() {
   function pickCategory(c: string) {
     setCategory(c);
     setSubtype(""); // subtypes always follow the category
+    if (c !== "Digital Marketing Agency") setServices([]);
+  }
+
+  function toggleService(id: string) {
+    setServices((cur) => (cur.includes(id) ? cur.filter((s) => s !== id) : [...cur, id]));
   }
 
   async function save() {
@@ -48,7 +60,7 @@ export default function BusinessProfilePage() {
       const res = await fetch("/api/business", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, category, subtype, size, years }),
+        body: JSON.stringify({ name, category, subtype, size, years, services }),
       });
       const j = await res.json();
       if (!j.ok) { setMsg(j.error || "We couldn't save your business information. Please try again."); return; }
@@ -93,6 +105,20 @@ export default function BusinessProfilePage() {
         {category === "Other" && (
           <>
             <label>Describe your business<br /><input className="field" value={subtype} onChange={(e) => setSubtype(e.target.value)} placeholder="e.g. POS and phone accessories kiosk" maxLength={120} /></label>
+            <div style={{ height: 10 }} />
+          </>
+        )}
+        {category === "Digital Marketing Agency" && allServices.length > 0 && (
+          <>
+            <label>Which services do you offer? (pick all that apply)<br /></label>
+            {allServices.map((s) => {
+              const on = services.includes(s.id);
+              return (
+                <button key={s.id} onClick={() => toggleService(s.id)} style={{ display: "block", width: "100%", textAlign: "left", padding: 12, borderRadius: 10, margin: "6px 0", border: on ? "2px solid #1A56DB" : "1px solid #E6EAF0", background: on ? "#EDF3FE" : "#fff", fontWeight: on ? 700 : 400, cursor: "pointer", fontSize: 15 }}>
+                  {on ? "✓ " : ""}{s.name}
+                </button>
+              );
+            })}
             <div style={{ height: 10 }} />
           </>
         )}

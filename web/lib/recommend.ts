@@ -21,12 +21,15 @@ export type Catalog = {
   tools: { id: string; name: string; description: string; website: string; category: string; pricing_type: string; free_plan: boolean; difficulty: string; best_for: string; mobile: boolean; nigeria: string }[];
   toolCaps: { tool_id: string; capability_id: string; base_stage: "now" | "later" | "future" }[];
   equivalents: { tool_id: string; tool_name: string }[];
+  practices: { capability_id: string; title: string; guidance: string }[];
 };
 
 export type Rec = {
   process_id: string;
   capability_id: string;
   tool_id: string | null;
+  kind: "tool" | "practice" | "covered";
+  practice_title: string;
   stage: "now" | "later" | "future";
   reason: string;
   relevance: number;
@@ -77,12 +80,29 @@ export function buildRecommendations(biz: BizCtx, mappings: MappingInput[], cat:
           process_id: m.process_id,
           capability_id: cid,
           tool_id: null,
+          kind: "covered",
+          practice_title: "",
           stage: "now",
           reason: `Your ${m.process_name} mapping shows: ${probLine}. You already use something that handles this.`,
           relevance: m.problems.length * 10 + 30,
           covered_note: `You already have a tool that can support this process (${toolName}). You may want to improve how you use it before adding another tool.`,
         });
         continue;
+      }
+      // Non-software improvement first: a practice anyone can do this week.
+      const practice = cat.practices.find((p) => p.capability_id === cid);
+      if (practice) {
+        out.push({
+          process_id: m.process_id,
+          capability_id: cid,
+          tool_id: null,
+          kind: "practice",
+          practice_title: practice.title,
+          stage: "now",
+          reason: `Your ${m.process_name} mapping shows: ${probLine}. This fix needs no new software.`,
+          relevance: m.problems.length * 10 + 25,
+          covered_note: practice.guidance,
+        });
       }
       const options = cat.toolCaps
         .filter((t) => t.capability_id === cid)
@@ -98,6 +118,8 @@ export function buildRecommendations(biz: BizCtx, mappings: MappingInput[], cat:
           process_id: m.process_id,
           capability_id: cid,
           tool_id: o.tool.id,
+          kind: "tool",
+          practice_title: "",
           stage,
           reason: `Your ${m.process_name} mapping shows: ${probLine}.${needLine} ${cap.name} can help with this, and ${o.tool.name} (${o.tool.difficulty}, ${o.tool.pricing_type}) fits a business like yours.`,
           relevance: m.problems.length * 10 + (stage === "now" ? 30 : stage === "later" ? 20 : 10),

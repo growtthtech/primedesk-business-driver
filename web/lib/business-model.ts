@@ -8,11 +8,12 @@ export type Relevance = "relevant" | "possible" | "not_relevant";
 export type RuleRow = {
   business_category: string;
   business_subtype: string | null;
+  service?: string | null;
   process_id: string;
   relevance: Relevance;
 };
 
-export const TRAITS = ["keeps-stock", "takes-bookings", "takes-orders", "sells-physical", "does-followup"] as const;
+export const TRAITS = ["keeps-stock", "takes-bookings", "takes-orders", "sells-physical", "does-followup", "has-team"] as const;
 export type Trait = (typeof TRAITS)[number];
 
 export const TRAIT_QUESTIONS: { trait: Trait; question: string }[] = [
@@ -21,6 +22,7 @@ export const TRAIT_QUESTIONS: { trait: Trait; question: string }[] = [
   { trait: "takes-bookings", question: "Do customers usually book a specific date or time?" },
   { trait: "takes-orders", question: "Do customers usually place orders?" },
   { trait: "does-followup", question: "Do you regularly follow up with customers?" },
+  { trait: "has-team", question: "Do you work with employees or regular contractors?" },
 ];
 
 // Processes whose relevance is decided by traits (unless an explicit rule wins).
@@ -49,26 +51,71 @@ function traitVerdict(processId: string, traits: Record<string, boolean>): Relev
   return null;
 }
 
+// Team-structure processes: solo operators see them as possible, not core.
+export const SOLO_DOWNWEIGHT = [
+  "tm-roles", "tm-onboarding", "tm-allocation", "tm-capacity", "tm-skills", "tm-handover", "tm-contractors",
+];
+
+export type RelevanceOpts = {
+  services?: string[];
+  solo?: boolean;
+  // areaId -> areaId map + strict areas: inside a strict area, an unmatched
+  // process is not_relevant (not possible) once the business offers services.
+  areaOf?: Record<string, string>;
+  strictAreas?: string[];
+  // Segment firewall: sme businesses never see agency areas and vice versa,
+  // unless an explicit rule says otherwise. segmentOf maps areaId -> segment.
+  segment?: string;
+  segmentOf?: Record<string, string>;
+};
+
 // Precedence: confident explicit rule (relevant/not_relevant) wins;
-// explicit "possible" means "uncertain — ask", so a answered trait resolves it;
-// unanswered traits stay possible (never assume).
+// service-scoped rules need the service offered; explicit "possible" defers
+// to answered traits; unanswered stays possible (never assume) — except in
+// strict areas with services offered, where unmatched means not_relevant.
 export function computeRelevance(
   category: string,
   subtype: string,
   traits: Record<string, boolean>,
   rules: RuleRow[],
-  processIds: string[]
+  processIds: string[],
+  opts: RelevanceOpts = {}
 ): Record<string, Relevance> {
+  const services = opts.services || [];
+  const solo = opts.solo || false;
+  const areaOf = opts.areaOf || {};
+  const strictAreas = opts.strictAreas || [];
+  const segment = opts.segment || "";
+  const segmentOf = opts.segmentOf || {};
   const out: Record<string, Relevance> = {};
   for (const pid of processIds) {
-    const hit =
-      rules.find((r) => r.business_category === category && r.business_subtype === subtype && r.process_id === pid) ||
-      rules.find((r) => r.business_category === category && !r.business_subtype && r.process_id === pid);
+    const matching = rules.filter(
+      (r) =>
+        r.business_category === category &&
+        (!r.business_subtype || r.business_subtype === subtype) &&
+        r.process_id === pid &&
+        (!r.service || services.includes(r.service))
+    );
+    // Most specific first: subtype+service > subtype > service > general.
+    matching.sort((a, b) => score(b) - score(a));
+    const hit = matching[0];
     if (hit && hit.relevance !== "possible") {
       out[pid] = hit.relevance;
-      continue;
+    } else if (segment && segmentOf[areaOf[pid] || ""] && segmentOf[areaOf[pid]] !== segment) {
+      out[pid] = "not_relevant";
+    } else {
+      const tv = traitVerdict(pid, traits);
+      if (tv) out[pid] = tv;
+      else if (services.length > 0 && strictAreas.includes(areaOf[pid] || "")) out[pid] = "not_relevant";
+      else out[pid] = "possible";
     }
-    out[pid] = traitVerdict(pid, traits) || "possible";
+    if (solo && out[pid] === "relevant" && SOLO_DOWNWEIGHT.includes(pid)) {
+      out[pid] = "possible";
+    }
   }
   return out;
+}
+
+function score(r: RuleRow): number {
+  return (r.business_subtype ? 2 : 0) + (r.service ? 1 : 0);
 }

@@ -7,6 +7,7 @@ import BottomNav from "../../components/BottomNav";
 type Rec = {
   id: string; process_id: string; process_name: string; stage: string;
   reason: string; relevance: number; covered_note: string; capability_id: string;
+  rec_kind: string; practice_title: string;
   capability_name: string; tool_id: string | null; tool_name: string | null;
   tool_description: string | null; website: string | null; tool_category: string | null;
   pricing_type: string | null; free_plan: boolean | null; difficulty: string | null;
@@ -119,6 +120,14 @@ export default function PlanPage() {
             <h2 style={{ margin: "18px 0 4px" }}>{s === "now" ? "⚡ NOW — consider first" : s === "later" ? "🌱 LATER — as you grow" : "🔭 FUTURE — when mature"}</h2>
             {groups[s].map((r) => r.tool_id ? (
               <RecCard key={r.id} r={r} onChange={load} />
+            ) : r.rec_kind === "practice" ? (
+              <div className="card card-growth" key={r.id}>
+                <span className="badge-growth">🛠 PRACTICE — NO PURCHASE NEEDED</span>
+                <p style={{ margin: "8px 0 4px" }}><b>{r.practice_title}</b></p>
+                <p className="hint" style={{ margin: "0 0 6px" }}>{r.covered_note}</p>
+                <p className="hint" style={{ margin: 0 }}>Why: {r.reason}</p>
+                <p className="hint" style={{ margin: "4px 0 0" }}>From: {r.process_name}</p>
+              </div>
             ) : (
               <div className="card card-growth" key={r.id}>
                 <b>{r.capability_name}</b>

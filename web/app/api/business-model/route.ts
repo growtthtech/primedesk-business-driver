@@ -10,7 +10,8 @@ export async function GET(req: Request) {
   try {
     const areas = await query("select id,name,description,display_order from business_areas where active order by display_order");
     const procs = await query("select id,area_id,name,description,example_activities,display_order from catalog_processes where active order by display_order");
-    return NextResponse.json({ ok: true, categories: CATEGORIES, sizes: SIZES, years: YEARS, areas: areas.rows, processes: procs.rows });
+    const svcs = await query("select id,name,description from agency_services order by name");
+    return NextResponse.json({ ok: true, categories: CATEGORIES, sizes: SIZES, years: YEARS, areas: areas.rows, processes: procs.rows, services: svcs.rows });
   } catch {
     return NextResponse.json({ ok: false, error: "We couldn't load the business catalog. Please try again." }, { status: 500 });
   }

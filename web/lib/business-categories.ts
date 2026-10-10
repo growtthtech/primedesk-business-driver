@@ -5,6 +5,7 @@ export const CATEGORIES: Record<string, string[]> = {
   "Beauty & Grooming": ["Hair Salon", "Barbershop", "Beauty Studio", "Makeup Artist", "Spa", "Beauty Product Business", "Other Beauty Business"],
   Fashion: ["Fashion Designer", "Tailor", "Clothing Brand", "Boutique", "Fashion Manufacturer", "Other Fashion Business"],
   "Service Business": ["Cleaning", "Photography", "Event Services", "Printing", "Consulting", "Digital/Creative Services", "Home Services", "Repair/Maintenance", "Professional Services", "Other Service Business"],
+  "Digital Marketing Agency": ["Solo Consultant", "Small Agency", "Growing Agency", "Established Agency"],
   Other: [],
 };
 

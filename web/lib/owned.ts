@@ -46,15 +46,23 @@ export async function mappingContext(req: Request, processId: string): Promise<M
     const category = normalizeCategory(String(biz.type || ""));
     const subtype = normalizeSubtype(String(biz.business_subtype || ""));
     const proc = await query(
-      "select p.id,p.name,p.description,p.area_id,a.name as area_name from catalog_processes p join business_areas a on a.id=p.area_id where p.id=$1 and p.active",
+      "select p.id,p.name,p.description,p.area_id,a.name as area_name,a.segment as area_segment from catalog_processes p join business_areas a on a.id=p.area_id where p.id=$1 and p.active",
       [processId]
     );
     if (proc.rows.length === 0) return { error: "That process isn't part of your map.", status: 400 as const };
-    const rulesR = await query("select business_category,business_subtype,process_id,relevance from relevance_rules where business_category=$1", [category]);
+    const rulesR = await query("select business_category,business_subtype,service,process_id,relevance from relevance_rules where business_category=$1", [category]);
     const traitsR = await query("select trait,answer from business_traits where business_id=$1", [biz.id]);
+    const svcR = await query("select service_id from business_services where business_id=$1", [biz.id]);
     const traits: Record<string, boolean> = {};
     for (const t of traitsR.rows) traits[t.trait as string] = t.answer as boolean;
-    const rel = computeRelevance(category, subtype, traits, rulesR.rows as RuleRow[], [processId])[processId];
+    const services = svcR.rows.map((r) => r.service_id as string);
+    const solo = String(biz.team_size || "") === "Just me";
+    const areaOf: Record<string, string> = {};
+    areaOf[processId] = proc.rows[0].area_id as string;
+    const segmentOf: Record<string, string> = {};
+    segmentOf[proc.rows[0].area_id as string] = (proc.rows[0].area_segment as string) || "sme";
+    const segment = category === "Digital Marketing Agency" ? "agency" : "sme";
+    const rel = computeRelevance(category, subtype, traits, rulesR.rows as RuleRow[], [processId], { services, solo, areaOf, strictAreas: ["ag-delivery"], segment, segmentOf })[processId];
     if (rel === "not_relevant") return { error: "That process isn't part of your map.", status: 400 as const };
     const saved = await query("select answers,status from process_mappings where business_id=$1 and process_id=$2", [biz.id, processId]);
     return {
