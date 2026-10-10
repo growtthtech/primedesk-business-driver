@@ -12,6 +12,7 @@ type Rec = {
   tool_description: string | null; website: string | null; tool_category: string | null;
   pricing_type: string | null; free_plan: boolean | null; difficulty: string | null;
   best_for: string | null; in_drive: boolean;
+  limitations: string | null; alternatives: string[];
 };
 
 const stagePill: Record<string, string> = { now: "pill-progress", later: "pill-waiting", future: "pill-todo" };
@@ -19,6 +20,8 @@ const stageWord: Record<string, string> = { now: "NOW", later: "LATER", future: 
 
 function RecCard({ r, onChange }: { r: Rec; onChange: () => void }) {
   const [busy, setBusy] = useState(false);
+  const [open, setOpen] = useState(false);
+  const alts = Array.isArray(r.alternatives) ? r.alternatives.filter((a) => a && a !== r.tool_name) : [];
   async function toggle() {
     setBusy(true);
     try {
@@ -43,6 +46,17 @@ function RecCard({ r, onChange }: { r: Rec; onChange: () => void }) {
         From: {r.process_name} → {r.capability_name} • {r.pricing_type}
         {r.free_plan ? " (free plan)" : ""} • {r.difficulty}
       </p>
+      {(r.limitations || alts.length > 0) && (
+        <button onClick={() => setOpen(!open)} style={{ border: 0, background: "transparent", color: "#1A56DB", fontSize: 13, padding: "4px 0", cursor: "pointer" }}>
+          {open ? "Hide trade-offs ▲" : "See trade-offs & alternatives ▼"}
+        </button>
+      )}
+      {open && (
+        <div style={{ background: "#F8FAFD", borderRadius: 10, padding: 10, margin: "6px 0" }}>
+          {r.limitations && <p className="hint" style={{ margin: "0 0 4px" }}><b>Trade-off:</b> {r.limitations}</p>}
+          {alts.length > 0 && <p className="hint" style={{ margin: 0 }}><b>Alternatives:</b> {alts.join(", ")}</p>}
+        </div>
+      )}
       <div style={{ display: "flex", gap: 8 }}>
         {r.website && <a href={r.website} target="_blank" rel="noreferrer" style={{ flex: 1, textAlign: "center", padding: 12, borderRadius: 12, border: "1px solid #E6EAF0", color: "#1A56DB", textDecoration: "none", fontSize: 14, fontWeight: 700 }}>Learn More</a>}
         <button className={r.in_drive ? "btn-ghost" : "btn-action"} style={{ flex: 2 }} disabled={busy} onClick={toggle}>
@@ -57,6 +71,7 @@ export default function PlanPage() {
   const [loading, setLoading] = useState(true);
   const [denied, setDenied] = useState("");
   const [summary, setSummary] = useState({ total: 0, now: 0, later: 0, future: 0 });
+  const [readiness, setReadiness] = useState<{ level: number; name: string; explanation: string } | null>(null);
   const [groups, setGroups] = useState<Record<string, Rec[]>>({ now: [], later: [], future: [] });
 
   function load() {
@@ -68,6 +83,7 @@ export default function PlanPage() {
         if (j.needLogin) { setDenied("login"); return; }
         if (!j.ok) { setDenied(j.error || "load"); return; }
         setSummary(j.summary);
+        setReadiness(j.readiness || null);
         setGroups(j.groups);
       })
       .catch(() => setDenied("load"))
@@ -113,6 +129,13 @@ export default function PlanPage() {
           </>
         )}
       </div>
+
+      {readiness && (
+        <div className="card card-growth" style={{ marginTop: 12 }}>
+          <span className="badge-growth">📶 YOUR DIGITAL READINESS: LEVEL {readiness.level} — {readiness.name.toUpperCase()}</span>
+          <p className="hint" style={{ margin: "8px 0 0" }}>{readiness.explanation}</p>
+        </div>
+      )}
 
       {(["now", "later", "future"] as const).map((s) => (
         groups[s].length > 0 && (

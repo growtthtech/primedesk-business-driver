@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CATEGORIES, SIZES, YEARS, validateProfile, normalizeCategory, normalizeSubtype } from "../../lib/business-categories";
+import { CATEGORIES, SIZES, YEARS, OPERATING_MODELS, PRIORITIES, validateProfile, normalizeCategory, normalizeSubtype } from "../../lib/business-categories";
 
 export default function BusinessProfilePage() {
   const router = useRouter();
@@ -12,6 +12,9 @@ export default function BusinessProfilePage() {
   const [subtype, setSubtype] = useState("");
   const [size, setSize] = useState("");
   const [years, setYears] = useState("");
+  const [operatingModel, setOperatingModel] = useState("");
+  const [priorities, setPriorities] = useState<string[]>([]);
+  const [techUsage, setTechUsage] = useState("");
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
   const [isNew, setIsNew] = useState(true);
@@ -34,6 +37,9 @@ export default function BusinessProfilePage() {
           setServices(j.business.services || []);
           setSize(j.business.size || "");
           setYears(j.business.years || "");
+          setOperatingModel(j.business.operatingModel || "");
+          setPriorities(j.business.priorities || []);
+          setTechUsage(j.business.techUsage || "");
           setIsNew(false);
         }
       })
@@ -52,15 +58,19 @@ export default function BusinessProfilePage() {
     setServices((cur) => (cur.includes(id) ? cur.filter((s) => s !== id) : [...cur, id]));
   }
 
+  function togglePriority(p: string) {
+    setPriorities((cur) => (cur.includes(p) ? cur.filter((x) => x !== p) : [...cur, p].slice(0, 6)));
+  }
+
   async function save() {
-    const err = validateProfile({ name, category, subtype, size, years });
+    const err = validateProfile({ name, category, subtype, size, years, operatingModel, priorities, techUsage });
     if (err) { setMsg(err); return; }
     setBusy(true); setMsg("Saving...");
     try {
       const res = await fetch("/api/business", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, category, subtype, size, years, services }),
+        body: JSON.stringify({ name, category, subtype, size, years, services, operatingModel, priorities, techUsage }),
       });
       const j = await res.json();
       if (!j.ok) { setMsg(j.error || "We couldn't save your business information. Please try again."); return; }
@@ -134,6 +144,27 @@ export default function BusinessProfilePage() {
             <option value="">Choose...</option>
             {YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
           </select>
+        </label>
+        <div style={{ height: 10 }} />
+        <label>How do you work? (optional)<br />
+          <select className="field" value={operatingModel} onChange={(e) => setOperatingModel(e.target.value)}>
+            <option value="">Choose...</option>
+            {OPERATING_MODELS.map((m) => <option key={m} value={m}>{m === "Solo" ? "Solo (just me)" : m}</option>)}
+          </select>
+        </label>
+        <div style={{ height: 10 }} />
+        <label>What should improve most? (pick up to 6)<br /></label>
+        {PRIORITIES.map((p) => {
+          const on = priorities.includes(p);
+          return (
+            <button key={p} onClick={() => togglePriority(p)} style={{ display: "block", width: "100%", textAlign: "left", padding: 12, borderRadius: 10, margin: "6px 0", border: on ? "2px solid #1A56DB" : "1px solid #E6EAF0", background: on ? "#EDF3FE" : "#fff", fontWeight: on ? 700 : 400, cursor: "pointer", fontSize: 15 }}>
+              {on ? "✓ " : ""}{p}
+            </button>
+          );
+        })}
+        <div style={{ height: 10 }} />
+        <label>What technology do you use today? (optional)<br />
+          <textarea className="field" rows={3} value={techUsage} onChange={(e) => setTechUsage(e.target.value)} placeholder="e.g. WhatsApp, notebook, Google Sheets..." maxLength={1000} />
         </label>
         <div style={{ height: 12 }} />
         <button className="btn-primary" disabled={busy} onClick={save}>{busy ? "Saving..." : isNew ? "Save and continue →" : "Save changes"}</button>

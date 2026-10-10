@@ -8,7 +8,7 @@ export async function GET(req: Request) {
   if ("error" in own) return NextResponse.json({ ok: false, error: own.error }, { status: own.status });
   try {
     const r = await query(
-      "select s.id,s.tool_id,s.selected_at, t.name as tool_name, t.description as tool_description, t.website, t.category as tool_category, t.pricing_type, t.difficulty, c.name as capability_name, p.name as process_name from my_drive_selections s join digital_tools t on t.id=s.tool_id left join tool_recommendations r on r.id=s.recommendation_id left join digital_capabilities c on c.id=r.capability_id left join catalog_processes p on p.id=r.process_id where s.business_id=$1 order by s.selected_at",
+      "select s.id,s.tool_id,s.status,s.selected_at, t.name as tool_name, t.description as tool_description, t.website, t.category as tool_category, t.pricing_type, t.difficulty, c.name as capability_name, p.name as process_name from my_drive_selections s join digital_tools t on t.id=s.tool_id left join tool_recommendations r on r.id=s.recommendation_id left join digital_capabilities c on c.id=r.capability_id left join catalog_processes p on p.id=r.process_id where s.business_id=$1 order by s.selected_at",
       [own.business.id]
     );
     return NextResponse.json({ ok: true, tools: r.rows });
@@ -41,9 +41,11 @@ export async function POST(req: Request) {
       }
       recId = body.recommendationId;
     }
+    const statuses = ["considering", "selected", "using", "implementing", "implemented"];
+    const status = typeof body.status === "string" && statuses.includes(body.status) ? body.status : "selected";
     const r = await query(
-      "insert into my_drive_selections(business_id,tool_id,recommendation_id) values($1,$2,$3) on conflict (business_id,tool_id) do update set recommendation_id=coalesce(excluded.recommendation_id, my_drive_selections.recommendation_id) returning id",
-      [own.business.id, body.toolId, recId]
+      "insert into my_drive_selections(business_id,tool_id,recommendation_id,status) values($1,$2,$3,$4) on conflict (business_id,tool_id) do update set recommendation_id=coalesce(excluded.recommendation_id, my_drive_selections.recommendation_id), status=excluded.status returning id",
+      [own.business.id, body.toolId, recId, status]
     );
     return NextResponse.json({ ok: true, selectionId: r.rows[0].id });
   } catch {

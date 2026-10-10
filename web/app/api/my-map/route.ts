@@ -17,13 +17,17 @@ export async function GET(req: Request) {
       query("select id,area_id,name,description,display_order from catalog_processes where active"),
       query("select business_category,business_subtype,service,process_id,relevance from relevance_rules where business_category=$1", [category]),
       query("select trait,answer from business_traits where business_id=$1", [biz.id]),
-      query("select process_id,status from business_processes where business_id=$1", [biz.id]),
+      query("select process_id,status,user_hidden from business_processes where business_id=$1", [biz.id]),
       query("select service_id from business_services where business_id=$1", [biz.id]),
     ]);
     const traits: Record<string, boolean> = {};
     for (const t of traitsR.rows) traits[t.trait as string] = t.answer as boolean;
     const stored: Record<string, string> = {};
-    for (const s of statesR.rows) stored[s.process_id as string] = s.status as string;
+    const hidden = new Set<string>();
+    for (const s of statesR.rows) {
+      stored[s.process_id as string] = s.status as string;
+      if (s.user_hidden) hidden.add(s.process_id as string);
+    }
     const services = svcR.rows.map((r) => r.service_id as string);
     const solo = String(biz.team_size || "") === "Just me";
     const pids = procsR.rows.map((p) => p.id as string);
@@ -38,6 +42,7 @@ export async function GET(req: Request) {
       "insert into business_processes(business_id,process_id,status,relevance) select $1, u.pid, 'not_started', u.rel from unnest($2::text[], $3::text[]) as u(pid, rel) on conflict (business_id,process_id) do update set relevance=excluded.relevance, updated_at=now()",
       [biz.id, pids, pids.map((p) => rel[p])]
     );
+    const hiddenList: { id: string; name: string }[] = [];
     const areas = areasR.rows.map((a) => ({
       id: a.id,
       name: a.name,
@@ -45,13 +50,21 @@ export async function GET(req: Request) {
       processes: procsR.rows
         .filter((p) => p.area_id === a.id)
         .sort((x, y) => (x.display_order as number) - (y.display_order as number))
-        .map((p) => ({
-          id: p.id,
-          name: p.name,
-          description: p.description,
-          status: stored[p.id as string] || "not_started",
-          relevance: rel[p.id as string],
-        }))
+        .map((p) => {
+          const pid = p.id as string;
+          if (hidden.has(pid)) {
+            hiddenList.push({ id: pid, name: p.name as string });
+            return null;
+          }
+          return {
+            id: pid,
+            name: p.name,
+            description: p.description,
+            status: stored[pid] || "not_started",
+            relevance: rel[pid],
+          };
+        })
+        .filter((p): p is NonNullable<typeof p> => p !== null)
         .filter((p) => p.relevance !== "not_relevant"),
     })).filter((a) => a.processes.length > 0);
     const hasPossible = areas.some((a) => a.processes.some((p) => p.relevance === "possible"));
@@ -63,6 +76,7 @@ export async function GET(req: Request) {
       business: { name: biz.name, category, subtype },
       services,
       areas,
+      hidden: hiddenList,
       pendingQuestions,
       progress: { mapped, total: areas.reduce((n, a) => n + a.processes.length, 0) },
     });

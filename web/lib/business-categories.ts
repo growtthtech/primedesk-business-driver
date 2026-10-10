@@ -23,6 +23,17 @@ export function normalizeSubtype(s: string): string {
 
 export const SIZES = ["Just me", "2–5", "6–10", "11–50", "50+"];
 
+export const OPERATING_MODELS = ["Solo", "Contractors", "Employees", "Mixed"];
+
+export const PRIORITIES = [
+  "Get more clients",
+  "Deliver work faster",
+  "Fewer manual tasks",
+  "Clearer client communication",
+  "Better reporting",
+  "Steadier income",
+];
+
 export const YEARS = ["Less than 1 year", "1–3 years", "3–5 years", "5+ years"];
 
 export type ProfileInput = {
@@ -31,6 +42,9 @@ export type ProfileInput = {
   subtype: string;
   size: string;
   years: string;
+  operatingModel: string;
+  priorities: string[];
+  techUsage: string;
 };
 
 // Shared client+server validation. Server never trusts the client alone.
@@ -50,5 +64,12 @@ export function validateProfile(p: Partial<ProfileInput>): string | null {
   }
   if (!p.size || !SIZES.includes(p.size)) return "Please choose your business size.";
   if (!p.years || !YEARS.includes(p.years)) return "Please choose how long you have been operating.";
+  if (p.operatingModel && !OPERATING_MODELS.includes(p.operatingModel)) return "Please choose a valid operating model.";
+  const prs = p.priorities || [];
+  if (prs.length > 6) return "Please pick at most 6 priorities.";
+  for (const pr of prs) {
+    if (!PRIORITIES.includes(pr)) return "One priority isn't recognized. Please re-check your picks.";
+  }
+  if ((p.techUsage || "").length > 1000) return "Technology notes are too long (max 1000 characters).";
   return null;
 }

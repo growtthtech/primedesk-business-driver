@@ -19,7 +19,8 @@ export default function MapPage() {
   }, []);
   const [fresh, setFresh] = useState("");
   const [saved, setSaved] = useState("");
-  const [mapData, setMapData] = useState<{ business: { name: string }; areas: { id: string; name: string; description: string; processes: { id: string; name: string; description: string; status: string; relevance: string }[] }[]; pendingQuestions: { trait: string; question: string }[] } | null>(null);
+  const [mapData, setMapData] = useState<{ business: { name: string }; areas: { id: string; name: string; description: string; processes: { id: string; name: string; description: string; status: string; relevance: string }[] }[]; hidden: { id: string; name: string }[]; pendingQuestions: { trait: string; question: string }[] } | null>(null);
+  const [showHidden, setShowHidden] = useState(false);
 
   function loadMap() {
     fetch("/api/my-map")
@@ -37,9 +38,16 @@ export default function MapPage() {
     router.push(`/map/${pid}`);
   }
 
-  async function answerTrait(trait: string, answer: boolean) {
+  async function answerTrait(trait: string, answer: boolean | null) {
     try {
       await fetch("/api/my-map/traits", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trait, answer }) });
+    } catch {}
+    loadMap();
+  }
+
+  async function hideProcess(pid: string, hide: boolean) {
+    try {
+      await fetch("/api/my-map/hide", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ processId: pid, hide }) });
     } catch {}
     loadMap();
   }
@@ -101,8 +109,9 @@ export default function MapPage() {
                 <div key={q.trait} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, padding: "8px 0" }}>
                   <span style={{ fontSize: 14 }}>{q.question}</span>
                   <span style={{ display: "flex", gap: 6, whiteSpace: "nowrap" }}>
-                    <button className="btn-ghost" style={{ width: 64, padding: 8 }} onClick={() => answerTrait(q.trait, true)}>Yes</button>
-                    <button className="btn-ghost" style={{ width: 64, padding: 8 }} onClick={() => answerTrait(q.trait, false)}>No</button>
+                    <button className="btn-ghost" style={{ width: 56, padding: 8 }} onClick={() => answerTrait(q.trait, true)}>Yes</button>
+                    <button className="btn-ghost" style={{ width: 56, padding: 8 }} onClick={() => answerTrait(q.trait, false)}>No</button>
+                    <button className="btn-ghost" style={{ width: 76, padding: 8, border: 0, background: "transparent", color: "#1A56DB" }} onClick={() => answerTrait(q.trait, null)}>Not sure</button>
                   </span>
                 </div>
               ))}
@@ -122,10 +131,28 @@ export default function MapPage() {
                   <button className="btn-ghost" style={{ padding: 10 }} onClick={() => startProcess(p.id)}>
                     {p.status === "mapped" ? "Review →" : p.status === "in_progress" ? "Continue →" : "Start →"}
                   </button>
+                  {p.relevance === "possible" && p.status === "not_started" && (
+                    <button onClick={() => hideProcess(p.id, true)} style={{ display: "block", width: "100%", border: 0, background: "transparent", color: "#7A8699", fontSize: 13, padding: 6, cursor: "pointer" }}>
+                      Not for me — hide
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
           ))}
+          {mapData.hidden.length > 0 && (
+            <div style={{ marginTop: 8 }}>
+              <button onClick={() => setShowHidden(!showHidden)} style={{ border: 0, background: "transparent", color: "#1A56DB", fontSize: 13, cursor: "pointer" }}>
+                {showHidden ? "Hide hidden processes" : `Show ${mapData.hidden.length} hidden process${mapData.hidden.length === 1 ? "" : "es"}`}
+              </button>
+              {showHidden && mapData.hidden.map((h) => (
+                <div key={h.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0" }}>
+                  <span style={{ fontSize: 14, color: "#7A8699" }}>{h.name}</span>
+                  <button onClick={() => hideProcess(h.id, false)} style={{ border: 0, background: "transparent", color: "#1A56DB", fontSize: 13, cursor: "pointer" }}>Restore</button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
       <div className="card">

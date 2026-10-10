@@ -106,3 +106,12 @@ insert into tool_capabilities(tool_id,capability_id,base_stage) values
 on conflict do nothing;
 insert into tool_equivalents(tool_id,tool_name) values ('zoho-crm','Zoho CRM')
 on conflict do nothing;
+
+-- Trade-off honesty for the most-recommended originals (seeded before these columns existed).
+update digital_tools set limitations='Only as organized as the person updating it; grows messy past a few dozen rows.', alternatives='{"Notion","Trello"}' where id='google-sheets';
+update digital_tools set limitations='Reminders depend on the owner checking the calendar.', alternatives='{"Notebook","Trello"}' where id='google-calendar';
+update digital_tools set limitations='Boards go stale unless someone grooms them weekly.', alternatives='{"Asana","Notebook"}' where id='trello';
+update digital_tools set limitations='Needs consistent internet; payouts follow provider timelines.', alternatives='{"Flutterwave","Bank transfer"}' where id='paystack';
+update digital_tools set limitations='Chats bury information; labels need discipline.', alternatives='{"Telegram","Email"}' where id='whatsapp-business';
+update digital_tools set limitations='Files rot without a naming habit.', alternatives='{"Notion","Notebook"}' where id='google-drive';
+update digital_tools set limitations='Forms alone do not follow up or track status.', alternatives='{"WhatsApp","Google Sheets"}' where id='google-forms';

@@ -8,6 +8,15 @@ type Sel = {
   id: string; tool_id: string; tool_name: string; tool_description: string;
   website: string; tool_category: string; pricing_type: string; difficulty: string;
   capability_name: string | null; process_name: string | null; selected_at: string;
+  status: string;
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  considering: "Under consideration",
+  selected: "Selected",
+  using: "Already using",
+  implementing: "Implementation in progress",
+  implemented: "Implemented",
 };
 
 export default function DrivePage() {
@@ -87,10 +96,32 @@ export default function DrivePage() {
           <h2 style={{ margin: "18px 0 4px" }}>{cap}</h2>
           {list.map((t) => (
             <div className="card" key={t.id}>
-              <b style={{ fontSize: 16 }}>{t.tool_name}</b>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                <b style={{ fontSize: 16 }}>{t.tool_name}</b>
+                <span className="pill pill-done">{STATUS_LABEL[t.status] || t.status}</span>
+              </div>
               <p className="hint" style={{ margin: "4px 0" }}>
                 Used for: {t.process_name || t.tool_category} • Selected {new Date(t.selected_at).toLocaleDateString()}
               </p>
+              <label style={{ display: "block", fontSize: 13, color: "#7A8699", marginBottom: 8 }}>Decision:
+                <select
+                  className="field"
+                  style={{ marginTop: 4 }}
+                  value={t.status}
+                  onChange={async (e) => {
+                    try {
+                      await fetch("/api/drive", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ toolId: t.tool_id, status: e.target.value }),
+                      });
+                      load();
+                    } catch {}
+                  }}
+                >
+                  {Object.entries(STATUS_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                </select>
+              </label>
               <div style={{ display: "flex", gap: 8 }}>
                 {t.website && <a href={t.website} target="_blank" rel="noreferrer" style={{ flex: 1, textAlign: "center", padding: 12, borderRadius: 12, border: "1px solid #E6EAF0", color: "#1A56DB", textDecoration: "none", fontSize: 14, fontWeight: 700 }}>Open site</a>}
                 <Link href="/plan" style={{ flex: 1, textAlign: "center", padding: 12, borderRadius: 12, border: "1px solid #E6EAF0", color: "#1A56DB", textDecoration: "none", fontSize: 14, fontWeight: 700 }}>View in Plan</Link>
