@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PrimeDesk Design System v4 - Light + Growth Green + Action Orange</title>
+<style>
+body{font-family:Inter,Arial,sans-serif;background:#FFFFFF;color:#2B3440;margin:0;padding:24px;line-height:1.5}
+.wrap{max-width:680px;margin:auto}
+.topnote{background:#F2F6FB;color:#1A3A5C;border:1px solid #DDE7F3;border-radius:16px;padding:14px 18px;margin:8px 0;font-weight:600}
+.badge{display:inline-block;font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px;border:1px solid transparent}
+.badge-action{background:#E8590C;color:#fff;border-color:#C94A08}
+.badge-growth{background:#DFF5E3;color:#1B7A3D;border-color:#A9DFBF}
+.badge-soft{background:#FFF3C4;color:#7A5B00;border-color:#F0D97A}
+.card{background:#FFFFFF;border:1px solid #E6EAF0;border-radius:16px;padding:20px;margin:14px 0;box-shadow:0 2px 12px rgba(26,58,92,.06)}
+h1{font-size:26px;font-weight:800;color:#1A3A5C}h2{font-size:18px;font-weight:700;margin-top:30px;color:#1A3A5C}
+.swatches{display:flex;gap:12px;flex-wrap:wrap}
+.sw{width:155px;border-radius:14px;overflow:hidden;border:1px solid #E6EAF0;background:#fff}
+.sw div{height:56px}.sw p{margin:0;padding:10px;font-size:13px}
+.btn{display:block;width:100%;padding:15px;border-radius:14px;border:0;font-size:16px;font-weight:700;margin:10px 0;cursor:pointer}
+.btn-p{background:#1A56DB;color:#fff}.btn-action{background:#E8590C;color:#fff;box-shadow:0 4px 14px rgba(232,89,12,.35)}.btn-g{background:#F2F4F7;color:#1A3A5C;border:1px solid #E6EAF0}
+.stage{background:#F8FAFD;border:1.5px solid #C9D7EA;border-radius:14px;padding:14px;text-align:center;font-weight:600;margin:8px 0;color:#1A3A5C}
+.arrow{text-align:center;font-size:18px;color:#9AA9BD}
+.pill{display:inline-block;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;margin:4px;border:1px solid transparent}
+.done{background:#EDF3FE;color:#1A56DB;border-color:#C9D7EA}.waiting{background:#FFF8E1;color:#8A6D00;border-color:#F0D97A}.stuck{background:#FFF1F1;color:#C03636;border-color:#F3C2C2}
+/* START NOW = urgency */
+.plan-start{border:2px solid #E8590C;background:#FFF7F0;box-shadow:0 4px 16px rgba(232,89,12,.12)}
+.plan-next{border:1.5px solid #C9D7EA}.plan-later{border:1.5px solid #E6EAF0;background:#FAFBFC}
+/* GROWTH = light green */
+.growth{background:#F2FBF4;border:1.5px solid #A9DFBF}
+.timeline-green{border-left:3px solid #34A853;margin-left:8px;padding-left:18px}
+.growth-today{background:#DFF5E3;border:1px solid #A9DFBF;border-radius:12px;padding:12px;margin:8px 0}
+.growth-next{background:#FFFFFF;border:1px solid #A9DFBF;border-radius:12px;padding:12px;margin:8px 0}
+.hint{color:#7A8699;font-size:14px}
+.section{background:#F8FAFD;border-radius:14px;padding:16px 18px;margin:12px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topnote">PrimeDesk — Business Driver &nbsp; <span class="badge badge-action">ACTION ORANGE</span> <span class="badge badge-growth">GROWTH GREEN</span><br><small style="font-weight:400;color:#5B6B80">Orange = urgency, act now. Light green = growth, progress. Rest stays light.</small></div>
+<h1>Design System v4 — Light Preview</h1>
+
+<h2>1. Colors</h2>
+<div class="section"><div class="swatches">
+<div class="sw"><div style="background:#E8590C"></div><p><b>Action Orange #E8590C</b><br>Start Now only — urgency</p></div>
+<div class="sw"><div style="background:#DFF5E3;border-bottom:1px solid #A9DFBF"></div><p><b>Growth Mint #DFF5E3</b><br>Growth Path bg</p></div>
+<div class="sw"><div style="background:#34A853"></div><p><b>Growth Green #34A853</b><br>Timeline + progress</p></div>
+<div class="sw"><div style="background:#1A56DB"></div><p><b>Business Blue</b><br>Normal Continue</p></div>
+<div class="sw"><div style="background:#fff;border-bottom:1px solid #E6EAF0"></div><p><b>White light theme</b></p></div>
+</div></div>
+
+<h2>2. Start Now — Urgency to take action</h2>
+<div class="card plan-start"><span class="badge badge-action">⚡ START NOW — Do this today</span><br><br><b>Good for you today — don't delay</b><br>✓ WhatsApp Business — for messages<br>✓ Simple list — for records<br>✓ Payment you use — for money<br><br><button class="btn btn-action">Start Now → Build My System</button><p class="hint">Orange border + orange badge + orange button. Only place orange appears — so eye goes here first. Use words: today, now, don't miss.</p></div>
+<div class="card plan-next"><b>NEXT WHEN YOU GROW</b><br>○ Customer list + Scheduling</div>
+<div class="card plan-later"><b>LATER</b><br>○ Full CRM + automation</div>
+
+<h2>3. Growth Path — Light green</h2>
+<div class="card growth"><div class="timeline-green">
+<div class="growth-today"><b>🌱 TODAY ✓ — Growing well</b><br>WhatsApp + List + Payment — solid foundation</div>
+<div class="growth-next"><b>NEXT — Keep growing</b><br>List + Scheduling — when &gt;30 chats/week</div>
+<div class="growth-next"><b>FUTURE — Flourish</b><br>CRM + automation — when you lead</div>
+</div><p class="hint">All growth in mint green family. Feels fresh, alive, moving up. Timeline green #34A853.</p></div>
+
+<h2>4. Rest stays light</h2>
+<div class="card"><button class="btn btn-p">Continue → (normal blue)</button><p class="hint">Blue for normal steps. Orange ONLY for Start Now action moment.</p></div>
+
+<h2>5. Review</h2>
+<div class="card"><p>Reply: <b>Keep Orange+Green / Softer Orange / Stronger Green</b></p></div>
+</div>
+</body>
+</html>
