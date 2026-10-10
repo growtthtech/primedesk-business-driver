@@ -7,7 +7,8 @@ export type SmsResult = { ok: boolean; mode: "real" | "pilot"; error?: string };
 export async function sendSMS(to: string, message: string): Promise<SmsResult> {
   const key = process.env.TERMII_API_KEY;
   const from = process.env.TERMII_SENDER_ID || "PrimeDesk";
-  const channel = process.env.TERMII_CHANNEL || "generic";
+  // OTPs are transactional: dnd route reaches DND-blocked lines, generic does not.
+  const channel = process.env.TERMII_CHANNEL || "dnd";
   if (!key) {
     console.log(`[PrimeDesk PILOT sms] To: ${to} | ${message} (add TERMII_API_KEY to send for real)`);
     return { ok: true, mode: "pilot" };
