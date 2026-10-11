@@ -36,15 +36,6 @@ export const PRIORITIES = [
 
 export const YEARS = ["Less than 1 year", "1–3 years", "3–5 years", "5+ years"];
 
-export const COUNTRY_CODES = [
-  { code: "+234", label: "Nigeria (+234)" },
-  { code: "+233", label: "Ghana (+233)" },
-  { code: "+254", label: "Kenya (+254)" },
-  { code: "+27", label: "South Africa (+27)" },
-  { code: "+44", label: "UK (+44)" },
-  { code: "+1", label: "US / Canada (+1)" },
-];
-
 export type ProfileInput = {
   name: string;
   category: string;
@@ -54,8 +45,6 @@ export type ProfileInput = {
   operatingModel: string;
   priorities: string[];
   techUsage: string;
-  countryCode: string;
-  contactPhone: string;
 };
 
 // Shared client+server validation. Server never trusts the client alone.
@@ -82,16 +71,5 @@ export function validateProfile(p: Partial<ProfileInput>): string | null {
     if (!PRIORITIES.includes(pr)) return "One priority isn't recognized. Please re-check your picks.";
   }
   if ((p.techUsage || "").length > 1000) return "Technology notes are too long (max 1000 characters).";
-  const codes = COUNTRY_CODES.map((c) => c.code);
-  const digits = (p.contactPhone || "").replace(/\D/g, "");
-  if (digits.length > 0) {
-    // Optional: validated only when provided.
-    if (!p.countryCode || !codes.includes(p.countryCode)) return "Please choose your country code.";
-    if (digits.length < 6 || digits.length > 14) return "Please enter a valid phone number.";
-  }
   return null;
-}
-
-export function fullPhone(p: Pick<ProfileInput, "countryCode" | "contactPhone">): string {
-  return `${p.countryCode}${(p.contactPhone || "").replace(/\D/g, "")}`;
 }

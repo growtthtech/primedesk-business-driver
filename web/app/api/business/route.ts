@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { query } from "@/lib/db";
-import { validateProfile, fullPhone } from "@/lib/business-categories";
+import { validateProfile } from "@/lib/business-categories";
 
 async function userId(req: Request) {
   const session = await auth.api.getSession({ headers: req.headers });
@@ -20,7 +20,6 @@ function toJson(row: Record<string, unknown>, services: string[] = []) {
     operatingModel: row.operating_model || "",
     priorities: (row.priorities || []) as string[],
     techUsage: row.tech_usage || "",
-    contactPhone: (row.contact_phone as string) || "",
   };
 }
 
@@ -61,16 +60,12 @@ export async function POST(req: Request) {
     operatingModel: String(body.operatingModel || ""),
     priorities: Array.isArray(body.priorities) ? body.priorities.filter((s): s is string => typeof s === "string") : [],
     techUsage: String(body.techUsage || ""),
-    countryCode: String(body.countryCode || ""),
-    contactPhone: String(body.contactPhone || ""),
   });
   if (err) return NextResponse.json({ ok: false, error: err }, { status: 400 });
   const services = Array.isArray(body.services) ? body.services.filter((s): s is string => typeof s === "string").slice(0, 12) : [];
   const priorities = (Array.isArray(body.priorities) ? body.priorities : []).filter((s): s is string => typeof s === "string").slice(0, 6);
   const operatingModel = String(body.operatingModel || "") || null;
   const techUsage = String(body.techUsage || "").slice(0, 1000);
-  const phoneDigits = String(body.contactPhone || "").replace(/\D/g, "");
-  const contactPhone = phoneDigits ? fullPhone({ countryCode: String(body.countryCode || ""), contactPhone: String(body.contactPhone || "") }) : "";
   try {
     const known = await query("select id from agency_services");
     const valid = new Set(known.rows.map((r) => r.id as string));
@@ -79,14 +74,14 @@ export async function POST(req: Request) {
     let row;
     if (existing.rows.length > 0) {
       const r = await query(
-        "update businesses set name=$1, type=$2, business_subtype=$3, team_size=$4, years_operating=$5, operating_model=$6, priorities=$7, tech_usage=$8, contact_phone=$9, updated_at=now() where id=$10 and user_id=$11 returning *",
-        [String(body.name).trim(), body.category, String(body.subtype).trim(), body.size, body.years, operatingModel, priorities, techUsage, contactPhone, existing.rows[0].id, uid]
+        "update businesses set name=$1, type=$2, business_subtype=$3, team_size=$4, years_operating=$5, operating_model=$6, priorities=$7, tech_usage=$8, updated_at=now() where id=$9 and user_id=$10 returning *",
+        [String(body.name).trim(), body.category, String(body.subtype).trim(), body.size, body.years, operatingModel, priorities, techUsage, existing.rows[0].id, uid]
       );
       row = r.rows[0];
     } else {
       const r = await query(
-        "insert into businesses(user_id,name,type,business_subtype,team_size,years_operating,operating_model,priorities,tech_usage,contact_phone) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) returning *",
-        [uid, String(body.name).trim(), body.category, String(body.subtype).trim(), body.size, body.years, operatingModel, priorities, techUsage, contactPhone]
+        "insert into businesses(user_id,name,type,business_subtype,team_size,years_operating,operating_model,priorities,tech_usage) values($1,$2,$3,$4,$5,$6,$7,$8,$9) returning *",
+        [uid, String(body.name).trim(), body.category, String(body.subtype).trim(), body.size, body.years, operatingModel, priorities, techUsage]
       );
       row = r.rows[0];
     }
