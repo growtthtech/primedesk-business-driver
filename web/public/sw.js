@@ -1,8 +1,8 @@
 // PrimeDesk service worker: app-shell offline, never auth/API data.
 // Static Next.js assets -> cache-first. Pages -> network-first with offline
 // fallback. /api/* -> network only (sensitive data is never cached).
-const CACHE = "primedesk-shell-v1";
-const SHELL = ["/", "/offline", "/icons/icon-192.png", "/icons/icon-512.png"];
+const CACHE = "primedesk-shell-v2";
+const SHELL = ["/", "/offline", "/icons/icon-192-v2.png", "/icons/icon-512-v2.png"];
 const API_RE = /\/api\//;
 
 self.addEventListener("install", (event) => {

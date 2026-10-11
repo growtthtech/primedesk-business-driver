@@ -15,7 +15,7 @@ export const metadata = {
   description: "PrimeDesk helps digital marketing agencies understand their processes and choose the right digital tools. Understand First. Recommend Second.",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "black-translucent" as const, title: "PrimeDesk" },
-  icons: { icon: [{ url: "/favicon.svg", type: "image/svg+xml" }, "/icons/icon-192.png"], apple: "/icons/apple-touch-icon.png" },
+  icons: { icon: [{ url: "/favicon.svg", type: "image/svg+xml" }, "/icons/icon-192-v2.png"], apple: "/icons/apple-touch-icon-v2.png" },
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0B1D33" };
