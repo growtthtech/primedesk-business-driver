@@ -106,7 +106,7 @@ export default function BusinessProfilePage() {
         <p className="hint">Only processes and tools that fit you.</p>
         <label>Agency name<br /><input className="field" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Brightline Media" maxLength={120} /></label>
         <div style={{ height: 10 }} />
-        <label>Contact phone<br />
+        <label>Contact phone (optional)<br />
           <span style={{ display: "flex", gap: 8 }}>
             <select className="field" style={{ maxWidth: 150 }} value={countryCode} onChange={(e) => setCountryCode(e.target.value)} aria-label="Country code">
               {COUNTRY_CODES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}

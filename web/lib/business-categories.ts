@@ -83,9 +83,12 @@ export function validateProfile(p: Partial<ProfileInput>): string | null {
   }
   if ((p.techUsage || "").length > 1000) return "Technology notes are too long (max 1000 characters).";
   const codes = COUNTRY_CODES.map((c) => c.code);
-  if (!p.countryCode || !codes.includes(p.countryCode)) return "Please choose your country code.";
   const digits = (p.contactPhone || "").replace(/\D/g, "");
-  if (digits.length < 6 || digits.length > 14) return "Please enter a valid phone number.";
+  if (digits.length > 0) {
+    // Optional: validated only when provided.
+    if (!p.countryCode || !codes.includes(p.countryCode)) return "Please choose your country code.";
+    if (digits.length < 6 || digits.length > 14) return "Please enter a valid phone number.";
+  }
   return null;
 }
 

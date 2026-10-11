@@ -69,7 +69,8 @@ export async function POST(req: Request) {
   const priorities = (Array.isArray(body.priorities) ? body.priorities : []).filter((s): s is string => typeof s === "string").slice(0, 6);
   const operatingModel = String(body.operatingModel || "") || null;
   const techUsage = String(body.techUsage || "").slice(0, 1000);
-  const contactPhone = fullPhone({ countryCode: String(body.countryCode || ""), contactPhone: String(body.contactPhone || "") });
+  const phoneDigits = String(body.contactPhone || "").replace(/\D/g, "");
+  const contactPhone = phoneDigits ? fullPhone({ countryCode: String(body.countryCode || ""), contactPhone: String(body.contactPhone || "") }) : "";
   try {
     const known = await query("select id from agency_services");
     const valid = new Set(known.rows.map((r) => r.id as string));
