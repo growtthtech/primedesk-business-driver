@@ -76,7 +76,9 @@ export async function GET(req: Request) {
     })).filter((a) => a.processes.length > 0);
     const hasPossible = areas.some((a) => a.processes.some((p) => p.relevance === "possible"));
     const answered = new Set(Object.keys(traits));
-    const pendingQuestions = hasPossible ? TRAIT_QUESTIONS.filter((q) => !answered.has(q.trait)) : [];
+    // Agencies never stock or sell physical products — skip those questions.
+    const skipped = segment === "agency" ? new Set(["keeps-stock", "sells-physical"]) : new Set<string>();
+    const pendingQuestions = hasPossible ? TRAIT_QUESTIONS.filter((q) => !answered.has(q.trait) && !skipped.has(q.trait)) : [];
     const mapped = Object.values(stored).filter((s) => s === "mapped").length;
     return NextResponse.json({
       ok: true,
