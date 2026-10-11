@@ -28,7 +28,10 @@ export const auth = betterAuth({
     }),
     phoneNumber({
       async sendOTP({ phoneNumber, code }) {
-        await sendSMS(phoneNumber, `Your PrimeDesk code: ${code}. It expires in 10 minutes.`);
+        const r = await sendSMS(phoneNumber, `Your PrimeDesk code: ${code}. It expires in 10 minutes.`);
+        // Real SMS failed (e.g. empty wallet): surface it so the login
+        // page can steer the user to free email OTP instead of stranding them.
+        if (!r.ok) throw new Error("SMS_FAILED");
       },
       signUpOnVerification: {
         getTempEmail: (phoneNumber) => `${phoneNumber.replace(/\D/g, "")}@phone.primedesk.local`,

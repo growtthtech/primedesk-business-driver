@@ -69,7 +69,7 @@ function LoginForm() {
         const phone = normalizeNG(v);
         if (!phone) { setMsg("Enter a valid Nigerian phone number, e.g. 08012345678."); return; }
         const res = await authClient.phoneNumber.sendOtp({ phoneNumber: phone });
-        if (res.error) { setMsg("We couldn't send your verification code. Please check your details and try again."); return; }
+        if (res.error) { setMsg("We couldn't text you a code (SMS unavailable). Enter your email instead — it's free and instant."); return; }
         setChannel("phone"); setTarget(phone);
         setMsg(`We sent a code to ${maskPhone(phone)}.`);
       }
