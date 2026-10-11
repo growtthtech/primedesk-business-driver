@@ -3,9 +3,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "../../lib/auth-client";
-import { normalizeNG, maskEmail, maskPhone } from "../../lib/phone";
-
-type Channel = "email" | "phone";
+import { maskEmail } from "../../lib/phone";
 
 // Only allow internal workspace destinations. Anything else falls back.
 const SAFE_NEXT = new Set(["/start", "/business-profile", "/map", "/plan", "/drive", "/profile"]);
@@ -21,7 +19,6 @@ function LoginForm() {
   const search = useSearchParams();
   const next = safeNext(search.get("next"));
   const [input, setInput] = useState("");
-  const [channel, setChannel] = useState<Channel>("email");
   const [target, setTarget] = useState("");
   const [code, setCode] = useState("");
   const [sent, setSent] = useState(false);
@@ -55,24 +52,14 @@ function LoginForm() {
 
   async function send() {
     const v = input.trim();
-    if (!v) { setMsg("Enter your email or phone number."); return; }
-    const isEmail = v.includes("@");
+    if (!v) { setMsg("Enter your email."); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) { setMsg("That email doesn't look right. Check it and retry."); return; }
     setBusy(true); setMsg("Sending your code...");
     try {
-      if (isEmail) {
-        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) { setMsg("That email doesn't look right. Check it and retry."); return; }
-        const res = await authClient.emailOtp.sendVerificationOtp({ email: v, type: "sign-in" });
-        if (res.error) { setMsg("We couldn't send your verification code. Please check your details and try again."); return; }
-        setChannel("email"); setTarget(v);
-        setMsg(`We sent a code to ${maskEmail(v)}.`);
-      } else {
-        const phone = normalizeNG(v);
-        if (!phone) { setMsg("Enter a valid Nigerian phone number, e.g. 08012345678."); return; }
-        const res = await authClient.phoneNumber.sendOtp({ phoneNumber: phone });
-        if (res.error) { setMsg("We couldn't text you a code (SMS unavailable). Enter your email instead — it's free and instant."); return; }
-        setChannel("phone"); setTarget(phone);
-        setMsg(`We sent a code to ${maskPhone(phone)}.`);
-      }
+      const res = await authClient.emailOtp.sendVerificationOtp({ email: v, type: "sign-in" });
+      if (res.error) { setMsg("We couldn't send your code. Check the email and try again."); return; }
+      setTarget(v);
+      setMsg(`We sent a code to ${maskEmail(v)}.`);
       setSent(true);
       setCooldown(30);
     } finally {
@@ -84,9 +71,7 @@ function LoginForm() {
     if (code.trim().length < 6) { setMsg("Enter the 6-digit code."); return; }
     setBusy(true); setMsg("Checking...");
     try {
-      const res = channel === "email"
-        ? await authClient.signIn.emailOtp({ email: target, otp: code.trim() })
-        : await authClient.phoneNumber.verify({ phoneNumber: target, code: code.trim() });
+      const res = await authClient.signIn.emailOtp({ email: target, otp: code.trim() });
       if (res.error) { setMsg("That code didn't work. Check it and retry, or resend a fresh one."); return; }
       setMsg("Welcome! Opening your workspace...");
       await afterAuth();
@@ -107,8 +92,8 @@ function LoginForm() {
       <div className="card">
         {!sent ? (
           <>
-            <label htmlFor="login-id">Email or phone number<br />
-              <input id="login-id" className="field" value={input} onChange={(e) => setInput(e.target.value)} placeholder="you@business.ng or 08012345678" inputMode="email" autoComplete="email tel" />
+            <label htmlFor="login-id">Email<br />
+              <input id="login-id" className="field" value={input} onChange={(e) => setInput(e.target.value)} placeholder="you@youragency.com" inputMode="email" autoComplete="email" />
             </label>
             <div style={{ height: 12 }} />
             <button className="btn-action" disabled={busy} onClick={send}>{busy ? "Sending..." : "Continue →"}</button>
@@ -116,7 +101,7 @@ function LoginForm() {
         ) : (
           <>
             <h2>Enter your verification code</h2>
-            <p className="hint">We sent a code to <b>{channel === "email" ? maskEmail(target) : maskPhone(target)}</b> <button onClick={() => { setSent(false); setCode(""); setMsg(""); }} style={{ border: 0, background: "none", color: "#1A56DB", cursor: "pointer", fontSize: 13 }}>(change)</button></p>
+            <p className="hint">We sent a code to <b>{maskEmail(target)}</b> <button onClick={() => { setSent(false); setCode(""); setMsg(""); }} style={{ border: 0, background: "none", color: "#1A56DB", cursor: "pointer", fontSize: 13 }}>(change)</button></p>
             <label htmlFor="login-code">6-digit code<br />
               <input id="login-code" className="field" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="• • • • • •" inputMode="numeric" autoComplete="one-time-code" maxLength={6} style={{ letterSpacing: 6, textAlign: "center", fontSize: 22, fontWeight: 800 }} />
             </label>

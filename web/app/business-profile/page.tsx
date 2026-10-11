@@ -2,7 +2,14 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CATEGORIES, SIZES, YEARS, OPERATING_MODELS, PRIORITIES, validateProfile, normalizeCategory, normalizeSubtype } from "../../lib/business-categories";
+import { CATEGORIES, SIZES, YEARS, OPERATING_MODELS, PRIORITIES, COUNTRY_CODES, validateProfile, normalizeCategory, normalizeSubtype } from "../../lib/business-categories";
+
+function splitPhone(full: string): [string, string] {
+  for (const c of COUNTRY_CODES.map((x) => x.code).sort((a, b) => b.length - a.length)) {
+    if (full.startsWith(c)) return [c, full.slice(c.length)];
+  }
+  return ["+234", full];
+}
 
 export default function BusinessProfilePage() {
   const router = useRouter();
@@ -13,6 +20,8 @@ export default function BusinessProfilePage() {
   const [size, setSize] = useState("");
   const [years, setYears] = useState("");
   const [operatingModel, setOperatingModel] = useState("");
+  const [countryCode, setCountryCode] = useState("+234");
+  const [contactPhone, setContactPhone] = useState("");
   const [priorities, setPriorities] = useState<string[]>([]);
   const [techUsage, setTechUsage] = useState("");
   const [msg, setMsg] = useState("");
@@ -38,6 +47,9 @@ export default function BusinessProfilePage() {
           setSize(j.business.size || "");
           setYears(j.business.years || "");
           setOperatingModel(j.business.operatingModel || "");
+          const [cc, num] = splitPhone(j.business.contactPhone || "");
+          setCountryCode(cc);
+          setContactPhone(num);
           setPriorities(j.business.priorities || []);
           setTechUsage(j.business.techUsage || "");
           setIsNew(false);
@@ -63,14 +75,14 @@ export default function BusinessProfilePage() {
   }
 
   async function save() {
-    const err = validateProfile({ name, category, subtype, size, years, operatingModel, priorities, techUsage });
+    const err = validateProfile({ name, category, subtype, size, years, operatingModel, priorities, techUsage, countryCode, contactPhone });
     if (err) { setMsg(err); return; }
     setBusy(true); setMsg("Saving...");
     try {
       const res = await fetch("/api/business", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, category, subtype, size, years, services, operatingModel, priorities, techUsage }),
+        body: JSON.stringify({ name, category, subtype, size, years, services, operatingModel, priorities, techUsage, countryCode, contactPhone }),
       });
       const j = await res.json();
       if (!j.ok) { setMsg(j.error || "We couldn't save your business information. Please try again."); return; }
@@ -93,6 +105,15 @@ export default function BusinessProfilePage() {
         <h2>{isNew ? "Tell us about your agency" : "Your agency profile"}</h2>
         <p className="hint">Only processes and tools that fit you.</p>
         <label>Agency name<br /><input className="field" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Brightline Media" maxLength={120} /></label>
+        <div style={{ height: 10 }} />
+        <label>Contact phone<br />
+          <span style={{ display: "flex", gap: 8 }}>
+            <select className="field" style={{ maxWidth: 150 }} value={countryCode} onChange={(e) => setCountryCode(e.target.value)} aria-label="Country code">
+              {COUNTRY_CODES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
+            </select>
+            <input className="field" value={contactPhone} onChange={(e) => setContactPhone(e.target.value.replace(/[^\d]/g, "").slice(0, 14))} placeholder="8012345678" inputMode="tel" autoComplete="tel" />
+          </span>
+        </label>
         <div style={{ height: 10 }} />
         <label>Business category<br />
           <select className="field" value={category} onChange={(e) => pickCategory(e.target.value)}>
