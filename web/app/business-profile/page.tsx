@@ -17,7 +17,9 @@ export default function BusinessProfilePage() {
   const [techUsage, setTechUsage] = useState("");
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
+  const [tried, setTried] = useState(false);
   const [isNew, setIsNew] = useState(true);
+  const [otherSubtype, setOtherSubtype] = useState("");
   const [allServices, setAllServices] = useState<{ id: string; name: string }[]>([]);
   const [services, setServices] = useState<string[]>([]);
 
@@ -33,7 +35,10 @@ export default function BusinessProfilePage() {
         if (j.business) {
           setName(j.business.name || "");
           setCategory(normalizeCategory(j.business.category || ""));
-          setSubtype(normalizeSubtype(j.business.subtype || ""));
+          const stored = normalizeSubtype(j.business.subtype || "");
+          const known = (CATEGORIES[normalizeCategory(j.business.category || "")] || []).includes(stored);
+          setSubtype(known ? stored : stored ? "Other" : "");
+          setOtherSubtype(known ? "" : stored);
           setServices(j.business.services || []);
           setSize(j.business.size || "");
           setYears(j.business.years || "");
@@ -62,19 +67,33 @@ export default function BusinessProfilePage() {
     setPriorities((cur) => (cur.includes(p) ? cur.filter((x) => x !== p) : [...cur, p].slice(0, 6)));
   }
 
+  function currentInput() {
+    return { name, category, subtype, otherSubtype, size, years, operatingModel, priorities, techUsage };
+  }
+
+  // After the first save attempt, re-check on every change: fixed fields
+  // clear their warning immediately, remaining gaps keep blocking save.
+  useEffect(() => {
+    if (!tried || busy) return;
+    setMsg(validateProfile(currentInput()) || "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name, category, subtype, otherSubtype, size, years, operatingModel, priorities, techUsage, tried, busy]);
+
   async function save() {
-    const err = validateProfile({ name, category, subtype, size, years, operatingModel, priorities, techUsage });
+    setTried(true);
+    const err = validateProfile(currentInput());
     if (err) { setMsg(err); return; }
     setBusy(true); setMsg("Saving...");
     try {
       const res = await fetch("/api/business", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, category, subtype, size, years, services, operatingModel, priorities, techUsage }),
+        body: JSON.stringify({ name, category, subtype, otherSubtype, size, years, services, operatingModel, priorities, techUsage }),
       });
       const j = await res.json();
       if (!j.ok) { setMsg(j.error || "We couldn't save your business information. Please try again."); return; }
       setIsNew(false);
+      setTried(false);
       setMsg("Saved ✓");
     } catch {
       setMsg("No connection. Check your internet and retry.");
@@ -103,8 +122,8 @@ export default function BusinessProfilePage() {
         <div style={{ height: 10 }} />
         {subs.length > 0 && (
           <>
-            <label>Which one fits best?<br />
-              <select className="field" value={subtype} onChange={(e) => setSubtype(e.target.value)}>
+            <label>Which agency type fits best?<br />
+              <select className="field" value={subtype} onChange={(e) => { setSubtype(e.target.value); if (e.target.value !== "Other") setOtherSubtype(""); }}>
                 <option value="">Choose...</option>
                 {subs.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
@@ -112,9 +131,9 @@ export default function BusinessProfilePage() {
             <div style={{ height: 10 }} />
           </>
         )}
-        {category === "Other" && (
+        {subtype === "Other" && (
           <>
-            <label>Describe your business<br /><input className="field" value={subtype} onChange={(e) => setSubtype(e.target.value)} placeholder="e.g. POS and phone accessories kiosk" maxLength={120} /></label>
+            <label>Describe your agency<br /><input className="field" value={otherSubtype} onChange={(e) => setOtherSubtype(e.target.value)} placeholder="e.g. Real-estate marketing agency" maxLength={120} /></label>
             <div style={{ height: 10 }} />
           </>
         )}
@@ -132,7 +151,7 @@ export default function BusinessProfilePage() {
             <div style={{ height: 10 }} />
           </>
         )}
-        <label>Business size<br />
+        <label>Agency size<br />
           <select className="field" value={size} onChange={(e) => setSize(e.target.value)}>
             <option value="">Choose...</option>
             {SIZES.map((s) => <option key={s} value={s}>{s}</option>)}

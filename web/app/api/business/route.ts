@@ -51,10 +51,14 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json({ ok: false, error: "We couldn't read that. Please try again." }, { status: 400 });
   }
+  const otherSubtype = String(body.otherSubtype || "").trim().slice(0, 120);
+  const rawSubtype = String(body.subtype || "");
+  const effectiveSubtype = rawSubtype === "Other" ? otherSubtype : rawSubtype.trim();
   const err = validateProfile({
     name: String(body.name || ""),
     category: String(body.category || ""),
-    subtype: String(body.subtype || ""),
+    subtype: rawSubtype,
+    otherSubtype,
     size: String(body.size || ""),
     years: String(body.years || ""),
     operatingModel: String(body.operatingModel || ""),
@@ -75,13 +79,13 @@ export async function POST(req: Request) {
     if (existing.rows.length > 0) {
       const r = await query(
         "update businesses set name=$1, type=$2, business_subtype=$3, team_size=$4, years_operating=$5, operating_model=$6, priorities=$7, tech_usage=$8, updated_at=now() where id=$9 and user_id=$10 returning *",
-        [String(body.name).trim(), body.category, String(body.subtype).trim(), body.size, body.years, operatingModel, priorities, techUsage, existing.rows[0].id, uid]
+        [String(body.name).trim(), body.category, effectiveSubtype, body.size, body.years, operatingModel, priorities, techUsage, existing.rows[0].id, uid]
       );
       row = r.rows[0];
     } else {
       const r = await query(
         "insert into businesses(user_id,name,type,business_subtype,team_size,years_operating,operating_model,priorities,tech_usage) values($1,$2,$3,$4,$5,$6,$7,$8,$9) returning *",
-        [uid, String(body.name).trim(), body.category, String(body.subtype).trim(), body.size, body.years, operatingModel, priorities, techUsage]
+        [uid, String(body.name).trim(), body.category, effectiveSubtype, body.size, body.years, operatingModel, priorities, techUsage]
       );
       row = r.rows[0];
     }

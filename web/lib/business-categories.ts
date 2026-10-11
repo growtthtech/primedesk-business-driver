@@ -1,15 +1,20 @@
-// Central business taxonomy (Master Spec §12 + Phase C canonical names).
-// Single source for profile form, validation, and relevance. Do not scatter checks.
+// Central agency taxonomy. The category key ("Digital Marketing Agency") is
+// load-bearing for relevance/segment rules — do not rename it. Subtypes are
+// agency specialisms + Other (free text). Old SME categories are dropped from
+// signup; grandfathered rows keep working through existing relevance rules.
 export const CATEGORIES: Record<string, string[]> = {
-  Food: ["Restaurant", "Bakery", "Caterer", "Food Vendor", "Cloud Kitchen", "Food Brand", "Other Food Business"],
-  "Beauty & Grooming": ["Hair Salon", "Barbershop", "Beauty Studio", "Makeup Artist", "Spa", "Beauty Product Business", "Other Beauty Business"],
-  Fashion: ["Fashion Designer", "Tailor", "Clothing Brand", "Boutique", "Fashion Manufacturer", "Other Fashion Business"],
-  "Service Business": ["Cleaning", "Photography", "Event Services", "Printing", "Consulting", "Digital/Creative Services", "Home Services", "Repair/Maintenance", "Professional Services", "Other Service Business"],
-  "Digital Marketing Agency": ["Solo Consultant", "Small Agency", "Growing Agency", "Established Agency"],
-  Other: [],
+  "Digital Marketing Agency": [
+    "SEO Agency",
+    "Social Media Agency",
+    "Content Marketing Agency",
+    "Paid Advertising Agency",
+    "Email Marketing Agency",
+    "Full-Service Agency",
+    "Other",
+  ],
 };
 
-// Grandfathered Phase B values → canonical. Old rows keep working everywhere.
+// Grandfathered pre-agency values → canonical. Old rows keep working everywhere.
 const CATEGORY_ALIASES: Record<string, string> = { Beauty: "Beauty & Grooming" };
 const SUBTYPE_ALIASES: Record<string, string> = { "Nail Studio": "Beauty Studio" };
 
@@ -40,6 +45,7 @@ export type ProfileInput = {
   name: string;
   category: string;
   subtype: string;
+  otherSubtype: string;
   size: string;
   years: string;
   operatingModel: string;
@@ -50,14 +56,19 @@ export type ProfileInput = {
 // Shared client+server validation. Server never trusts the client alone.
 export function validateProfile(p: Partial<ProfileInput>): string | null {
   const name = (p.name || "").trim();
-  if (!name) return "Please enter your business name.";
-  if (name.length > 120) return "Business name is too long (max 120 characters).";
+  if (!name) return "Please enter your agency name.";
+  if (name.length > 120) return "Agency name is too long (max 120 characters).";
   if (!p.category || !CATEGORIES[normalizeCategory(p.category)]) return "Please choose a business category.";
   const cat = normalizeCategory(p.category);
   const sub = normalizeSubtype(p.subtype || "");
   const subs = CATEGORIES[cat];
   if (subs.length > 0) {
-    if (!sub || !subs.includes(sub)) return "Please choose the option that fits best.";
+    if (!sub || !subs.includes(sub)) return "Please choose the agency type that fits best.";
+    if (sub === "Other") {
+      const custom = (p.otherSubtype || "").trim();
+      if (custom.length < 2) return "Please describe your agency type.";
+      if (custom.length > 120) return "Agency description is too long (max 120 characters).";
+    }
   } else {
     if (!sub.trim()) return "Please describe your business.";
     if (sub.trim().length > 120) return "Business description is too long (max 120 characters).";
