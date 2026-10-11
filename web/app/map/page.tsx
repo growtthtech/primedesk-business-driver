@@ -5,7 +5,6 @@ import Link from "next/link";
 import ProgressBar from "../../components/ProgressBar";
 import BottomNav from "../../components/BottomNav";
 import WorkspacePreview from "../../components/WorkspacePreview";
-import { loadState, saveState } from "../../lib/store";
 
 const MAP_SAMPLE_AREAS = [
   { name: "Business Development", done: "9 of 15 mapped", tone: "#1A56DB" },
@@ -15,32 +14,23 @@ const MAP_SAMPLE_AREAS = [
 
 export default function MapPage() {
   const router = useRouter();
-  const [biz, setBiz] = useState(() => loadState());
   const [gate, setGate] = useState<"checking" | "in" | "preview" | "setup">("checking");
 
-  // Gate: agency owners enter via their business profile (server-verified).
-  // Legacy on-device progress still opens the map. Logged-out visitors
-  // without progress see the public preview — never another agency's data.
+  // Gate: server-verified agency profile only. Logged-out visitors see the
+  // public preview — never another agency's data, no legacy side doors.
   useEffect(() => {
-    let legacy = false;
-    try {
-      const s = loadState();
-      legacy = !!(s.started && s.stages.length > 0);
-    } catch {}
     fetch("/api/business")
       .then((r) => (r.status === 401 ? { loggedOut: true } : r.json()))
       .then((j) => {
-        if (!j || j.loggedOut) { setGate(legacy ? "in" : "preview"); return; }
+        if (!j || j.loggedOut) { setGate("preview"); return; }
         if (j.ok && j.business) setGate("in");
-        else if (j.ok) setGate(legacy ? "in" : "setup");
-        else setGate(legacy ? "in" : "preview");
+        else if (j.ok) setGate("setup");
+        else setGate("preview");
       })
-      .catch(() => setGate(legacy ? "in" : "preview"));
+      .catch(() => setGate("preview"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const allowed = gate === "in";
-  const [fresh, setFresh] = useState("");
-  const [saved, setSaved] = useState("");
   const [mapData, setMapData] = useState<{ business: { name: string }; progress: { mapped: number; total: number }; areas: { id: string; name: string; description: string; processes: { id: string; name: string; description: string; status: string; relevance: string; key: boolean }[] }[]; hidden: { id: string; name: string }[]; pendingQuestions: { trait: string; question: string }[] } | null>(null);
   const [showHidden, setShowHidden] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -77,47 +67,6 @@ export default function MapPage() {
       await fetch("/api/my-map/hide", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ processId: pid, hide }) });
     } catch {}
     loadMap();
-  }
-
-  function update(i: number, v: string) {
-    const stages = [...biz.stages];
-    stages[i] = v;
-    setBiz({ ...biz, stages });
-  }
-
-  async function confirm() {
-    const next = { ...biz };
-    saveState(next);
-    setSaved("Saving...");
-    try {
-      // Attach owned business id when logged in (server verifies ownership).
-      let businessId = "";
-      try {
-        const mine = await fetch("/api/business");
-        if (mine.ok) {
-          const mj = await mine.json();
-          if (mj.ok && mj.business) businessId = mj.business.id;
-        }
-      } catch {}
-      const res = await fetch("/api/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...next, businessId, level: next.level || "ORGANIZE" }),
-      });
-      const j = await res.json();
-      setSaved(j.ok ? "Saved ✓" : "Saved on this phone (server busy)");
-      // Phase C bridge: mark covered in-progress catalog processes as mapped.
-      try {
-        await fetch("/api/my-map/complete", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ templateKey: next.templateKey }),
-        });
-      } catch {}
-    } catch {
-      setSaved("Saved on this phone ✓ (will sync later)");
-    }
-    setTimeout(() => router.push("/plan"), 600);
   }
 
   if (gate === "checking") return <div className="card"><p className="hint">Loading your map...</p></div>;
@@ -232,25 +181,6 @@ export default function MapPage() {
           )}
         </div>
       )}
-      <div className="card">
-        <h2>This is how work flows through your agency</h2>
-        <p className="hint">Fix names until you can say: “Yes, this is my agency.”</p>
-        {biz.stages.map((s, i) => (
-          <div key={i} className="fade-in" style={{ background: "#F8FAFD", border: "1.5px solid #C9D7EA", borderRadius: 14, padding: 10, margin: "8px 0", display: "flex", gap: 8, alignItems: "center" }}>
-            <span style={{ color: "#C8962E", fontWeight: 800 }}>{i + 1}</span>
-            <input className="field" style={{ border: 0, background: "transparent", fontWeight: 600 }} value={s} onChange={(e) => update(i, e.target.value)} />
-            <button onClick={() => setBiz({ ...biz, stages: biz.stages.filter((_, j) => j !== i) })} style={{ border: 0, background: "transparent", fontSize: 16, cursor: "pointer" }}>✕</button>
-          </div>
-        ))}
-        <div style={{ display: "flex", gap: 8 }}>
-          <input className="field" value={fresh} onChange={(e) => setFresh(e.target.value)} placeholder="+ Add stage e.g. Delivery" />
-          <button className="btn-ghost" style={{ width: 90 }} onClick={() => { if (fresh.trim()) { setBiz({ ...biz, stages: [...biz.stages, fresh.trim()] }); setFresh(""); } }}>Add</button>
-        </div>
-        <div style={{ height: 12 }} />
-        <button className="btn-primary" onClick={confirm}>Confirm — This is my process →</button>
-        {saved && <p className="hint" style={{ marginTop: 8 }}>{saved}</p>}
-        <Link href="/start" style={{ display: "block", textAlign: "center", marginTop: 10, color: "#1A56DB", fontSize: 14 }}>← Back</Link>
-      </div>
       <BottomNav />
     </div>
   );
