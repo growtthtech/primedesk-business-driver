@@ -65,23 +65,27 @@ export default function DashboardPage() {
   }
 
   const done = map.progress.mapped > 0;
-  const cards: { t: string; d: string; href: string; cta: string }[] = [
+  const cards: { t: string; d: string; href: string; cta: string; locked: boolean }[] = [
     {
       t: `My Map — ${map.progress.mapped} of ${map.progress.total} mapped`,
       d: done ? "Your process picture so far." : "Start here: assess your key processes.",
-      href: "/map", cta: done ? "Continue mapping →" : "Start mapping →",
+      href: "/map", cta: done ? "Continue mapping →" : "Start mapping →", locked: false,
     },
     {
-      t: plan ? `My Plan — ${plan.summary.total} suggestions` : "My Plan",
-      d: plan && plan.summary.total > 0
-        ? `${plan.summary.now} now • ${plan.summary.later} later • ${plan.summary.future} future${plan.readiness ? ` • Level ${plan.readiness.level} ${plan.readiness.name}` : ""}`
-        : "Appears once processes are mapped.",
-      href: "/plan", cta: "Open My Plan →",
+      t: plan && done ? `My Plan — ${plan.summary.total} suggestions` : "My Plan",
+      d: !done
+        ? "Locked — finish one process to unlock."
+        : plan && plan.summary.total > 0
+          ? `${plan.summary.now} now • ${plan.summary.later} later • ${plan.summary.future} future${plan.readiness ? ` • Level ${plan.readiness.level} ${plan.readiness.name}` : ""}`
+          : "No suggestions yet — mapped processes came back clean.",
+      href: done ? "/plan" : "/map", cta: done ? "Open My Plan →" : "Map a process first →", locked: !done,
     },
     {
-      t: `My Drive — ${driveCount} tool${driveCount === 1 ? "" : "s"}`,
-      d: "Tools you use and decisions you track.",
-      href: "/drive", cta: "Open My Drive →",
+      t: done ? `My Drive — ${driveCount} tool${driveCount === 1 ? "" : "s"}` : "My Drive",
+      d: !done
+        ? "Locked — it fills with tools from your plan."
+        : "Tools you use and decisions you track.",
+      href: done ? "/drive" : "/map", cta: done ? "Open My Drive →" : "Map a process first →", locked: !done,
     },
   ];
 
@@ -95,10 +99,10 @@ export default function DashboardPage() {
         </p>
       </div>
       {cards.map((c) => (
-        <div key={c.t} className="card" style={{ padding: 16 }}>
-          <b style={{ color: "#1A3A5C" }}>{c.t}</b>
+        <div key={c.t} className="card" style={{ padding: 16, opacity: c.locked ? 0.75 : 1 }}>
+          <b style={{ color: "#1A3A5C" }}>{c.t}{c.locked ? " 🔒" : ""}</b>
           <p className="hint" style={{ margin: "4px 0 10px" }}>{c.d}</p>
-          <Link href={c.href} className="btn-ghost" style={{ display: "block", textDecoration: "none", textAlign: "center", padding: 12 }}>{c.cta}</Link>
+          <Link href={c.href} className={c.locked ? "btn-ghost" : "btn-primary"} style={{ display: "block", textDecoration: "none", textAlign: "center", padding: 12 }}>{c.cta}</Link>
         </div>
       ))}
       <div className="card" style={{ textAlign: "center" }}>

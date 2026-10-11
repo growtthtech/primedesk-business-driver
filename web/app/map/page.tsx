@@ -181,6 +181,15 @@ export default function MapPage() {
           )}
         </div>
       )}
+      {mapData && mapData.progress.mapped > 0 && (
+        <div className="card card-action" style={{ textAlign: "center" }}>
+          <h2 style={{ margin: "0 0 6px" }}>{mapData.progress.mapped} process{mapData.progress.mapped === 1 ? "" : "es"} mapped. Ready for your plan?</h2>
+          <p style={{ color: "#8A4A1B", margin: "0 0 12px", fontSize: 14 }}>Turn mapped processes into Now / Later / Future improvements.</p>
+          <Link href="/plan" className="btn-action" style={{ display: "block", textDecoration: "none", textAlign: "center" }}>
+            See My Plan →
+          </Link>
+        </div>
+      )}
       <BottomNav />
     </div>
   );

@@ -7,11 +7,15 @@ export async function GET(req: Request) {
   const own = await ownBusiness(req);
   if ("error" in own) return NextResponse.json({ ok: false, error: own.error }, { status: own.status });
   try {
+    const mappedR = await query(
+      "select count(*)::int as n from process_mappings m where m.business_id=$1 and m.status='mapped' and not exists (select 1 from business_processes bp where bp.business_id=m.business_id and bp.process_id=m.process_id and bp.user_hidden)",
+      [own.business.id]
+    );
     const r = await query(
       "select s.id,s.tool_id,s.status,s.selected_at, t.name as tool_name, t.description as tool_description, t.website, t.category as tool_category, t.pricing_type, t.difficulty, c.name as capability_name, p.name as process_name from my_drive_selections s join digital_tools t on t.id=s.tool_id left join tool_recommendations r on r.id=s.recommendation_id left join digital_capabilities c on c.id=r.capability_id left join catalog_processes p on p.id=r.process_id where s.business_id=$1 order by s.selected_at",
       [own.business.id]
     );
-    return NextResponse.json({ ok: true, tools: r.rows });
+    return NextResponse.json({ ok: true, tools: r.rows, mapped: (mappedR.rows[0]?.n as number) || 0 });
   } catch {
     return NextResponse.json({ ok: false, error: "We couldn't load your drive. Please try again." }, { status: 500 });
   }

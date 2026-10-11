@@ -71,6 +71,7 @@ function RecCard({ r, onChange }: { r: Rec; onChange: () => void }) {
 export default function PlanPage() {
   const [loading, setLoading] = useState(true);
   const [denied, setDenied] = useState("");
+  const [mapped, setMapped] = useState(0);
   const [summary, setSummary] = useState({ total: 0, now: 0, later: 0, future: 0 });
   const [readiness, setReadiness] = useState<{ level: number; name: string; explanation: string } | null>(null);
   const [groups, setGroups] = useState<Record<string, Rec[]>>({ now: [], later: [], future: [] });
@@ -83,6 +84,7 @@ export default function PlanPage() {
         if (!j) { setDenied("load"); return; }
         if (j.needLogin) { setDenied("login"); return; }
         if (!j.ok) { setDenied(j.error || "load"); return; }
+        setMapped(j.mapped || 0);
         setSummary(j.summary);
         setReadiness(j.readiness || null);
         setGroups(j.groups);
@@ -94,6 +96,17 @@ export default function PlanPage() {
   useEffect(() => { load(); }, []);
 
   if (loading) return <div className="card"><p className="hint">Building your plan...</p></div>;
+  // Linear flow: no mapped processes yet → back to My Map. Nothing else here.
+  if (!loading && !denied && mapped === 0) {
+    return (
+      <div className="card" style={{ textAlign: "center" }}>
+        <span className="badge-growth">STEP 1 FIRST</span>
+        <h2 style={{ marginBottom: 4 }}>Map a process first.</h2>
+        <p className="hint">Your plan is built from mapped processes. Finish one to unlock it.</p>
+        <Link href="/map" className="btn-primary" style={{ display: "block", textDecoration: "none", textAlign: "center" }}>Go to My Map →</Link>
+      </div>
+    );
+  }
   if (denied === "login") {
     return (
       <WorkspacePreview

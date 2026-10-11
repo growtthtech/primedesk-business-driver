@@ -78,6 +78,7 @@ export async function GET(req: Request) {
     return NextResponse.json({
       ok: true,
       readiness,
+      mapped: inputs.length,
       summary: { total: saved.rows.length, now: groups.now.length, later: groups.later.length, future: groups.future.length },
       groups,
     });

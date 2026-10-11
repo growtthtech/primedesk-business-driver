@@ -23,6 +23,7 @@ const STATUS_LABEL: Record<string, string> = {
 export default function DrivePage() {
   const [loading, setLoading] = useState(true);
   const [denied, setDenied] = useState("");
+  const [mapped, setMapped] = useState(0);
   const [tools, setTools] = useState<Sel[]>([]);
 
   function load() {
@@ -33,6 +34,7 @@ export default function DrivePage() {
         if (!j) { setDenied("load"); return; }
         if (j.needLogin) { setDenied("login"); return; }
         if (!j.ok) { setDenied(j.error || "load"); return; }
+        setMapped(j.mapped || 0);
         setTools(j.tools);
       })
       .catch(() => setDenied("load"))
@@ -53,6 +55,17 @@ export default function DrivePage() {
   }
 
   if (loading) return <div className="card"><p className="hint">Loading your drive...</p></div>;
+  // Linear flow: map → plan → drive. No mapped processes yet → back to My Map.
+  if (!loading && !denied && mapped === 0) {
+    return (
+      <div className="card" style={{ textAlign: "center" }}>
+        <span className="badge-growth">STEPS 1–2 FIRST</span>
+        <h2 style={{ marginBottom: 4 }}>Map first, then choose tools.</h2>
+        <p className="hint">Your drive fills with tools you pick from your plan — which starts with a mapped process.</p>
+        <Link href="/map" className="btn-primary" style={{ display: "block", textDecoration: "none", textAlign: "center" }}>Go to My Map →</Link>
+      </div>
+    );
+  }
   if (denied === "login") {
     return (
       <WorkspacePreview
