@@ -4,19 +4,41 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProgressBar from "../../components/ProgressBar";
 import BottomNav from "../../components/BottomNav";
+import WorkspacePreview from "../../components/WorkspacePreview";
 import { loadState, saveState } from "../../lib/store";
+
+const MAP_SAMPLE_AREAS = [
+  { name: "Business Development", done: "9 of 15 mapped", tone: "#1A56DB" },
+  { name: "Client Management", done: "6 of 15 mapped", tone: "#E8590C" },
+  { name: "Service Delivery", done: "4 of 18 mapped", tone: "#1B7A3D" },
+];
 
 export default function MapPage() {
   const router = useRouter();
   const [biz, setBiz] = useState(() => loadState());
-  const [allowed, setAllowed] = useState(false);
+  const [gate, setGate] = useState<"checking" | "in" | "preview" | "setup">("checking");
 
-  // Gate: only owners who started (/start) may see the map.
+  // Gate: agency owners enter via their business profile (server-verified).
+  // Legacy on-device progress still opens the map. Logged-out visitors
+  // without progress see the public preview — never another agency's data.
   useEffect(() => {
-    if (!biz.started || biz.stages.length === 0) router.push("/start");
-    else setAllowed(true);
+    let legacy = false;
+    try {
+      const s = loadState();
+      legacy = !!(s.started && s.stages.length > 0);
+    } catch {}
+    fetch("/api/business")
+      .then((r) => (r.status === 401 ? { loggedOut: true } : r.json()))
+      .then((j) => {
+        if (!j || j.loggedOut) { setGate(legacy ? "in" : "preview"); return; }
+        if (j.ok && j.business) setGate("in");
+        else if (j.ok) setGate(legacy ? "in" : "setup");
+        else setGate(legacy ? "in" : "preview");
+      })
+      .catch(() => setGate(legacy ? "in" : "preview"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const allowed = gate === "in";
   const [fresh, setFresh] = useState("");
   const [saved, setSaved] = useState("");
   const [mapData, setMapData] = useState<{ business: { name: string }; areas: { id: string; name: string; description: string; processes: { id: string; name: string; description: string; status: string; relevance: string }[] }[]; hidden: { id: string; name: string }[]; pendingQuestions: { trait: string; question: string }[] } | null>(null);
@@ -93,6 +115,46 @@ export default function MapPage() {
     setTimeout(() => router.push("/plan"), 600);
   }
 
+  if (gate === "checking") return <div className="card"><p className="hint">Loading your map...</p></div>;
+
+  if (gate === "preview") {
+    return (
+      <WorkspacePreview
+        eyebrow="MY MAP — SAMPLE PREVIEW"
+        title="Know where your agency stands."
+        copy="My Map turns how work flows through your agency into a clear picture — which processes are mapped, which are in progress, and which areas need attention first."
+        next="/map"
+        primaryLabel="Start My Map"
+        sample={
+          <div>
+            {MAP_SAMPLE_AREAS.map((a) => (
+              <div key={a.name} style={{ border: "1px solid #E6EAF0", borderRadius: 12, padding: 12, margin: "8px 0" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                  <b>{a.name}</b>
+                  <span className="pill pill-progress">{a.done}</span>
+                </div>
+                <div style={{ background: "#F2F4F7", borderRadius: 8, height: 8, marginTop: 8 }}>
+                  <div style={{ background: a.tone, width: "45%", height: 8, borderRadius: 8 }} />
+                </div>
+              </div>
+            ))}
+            <p className="hint" style={{ margin: "8px 0 0" }}>Fictional example agency — your map reflects your own processes.</p>
+          </div>
+        }
+      />
+    );
+  }
+
+  if (gate === "setup") {
+    return (
+      <div className="card" style={{ textAlign: "center" }}>
+        <h2>Set up your agency first</h2>
+        <p className="hint">My Map is built from your agency profile — services, operating model, and priorities.</p>
+        <Link href="/business-profile" className="btn-primary" style={{ display: "block", textDecoration: "none", textAlign: "center" }}>Set up my agency →</Link>
+      </div>
+    );
+  }
+
   if (!allowed) return null;
 
   return (
@@ -100,8 +162,8 @@ export default function MapPage() {
       <ProgressBar step={4} />
       {mapData && (
         <div className="card">
-          <h2>🗺 My Map — {mapData.business.name || "My Business"}</h2>
-          <p className="hint">Where your business stands. Start a process to map it properly.</p>
+          <h2>My Map — {mapData.business.name || "My Agency"}</h2>
+          <p className="hint">Where your agency stands. Start a process to map it properly.</p>
           {mapData.pendingQuestions.length > 0 && (
             <div style={{ background: "#F8FAFD", border: "1px solid #E6EAF0", borderRadius: 12, padding: 12, margin: "8px 0" }}>
               <b>Quick check — helps us show only what fits:</b>
@@ -156,8 +218,8 @@ export default function MapPage() {
         </div>
       )}
       <div className="card">
-        <h2>This is how your business works</h2>
-        <p className="hint">Fix names until you can say: “Yes, this is my business.”</p>
+        <h2>This is how work flows through your agency</h2>
+        <p className="hint">Fix names until you can say: “Yes, this is my agency.”</p>
         {biz.stages.map((s, i) => (
           <div key={i} className="fade-in" style={{ background: "#F8FAFD", border: "1.5px solid #C9D7EA", borderRadius: 14, padding: 10, margin: "8px 0", display: "flex", gap: 8, alignItems: "center" }}>
             <span style={{ color: "#C8962E", fontWeight: 800 }}>{i + 1}</span>

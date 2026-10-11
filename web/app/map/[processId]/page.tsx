@@ -107,7 +107,7 @@ export default function MappingPage({ params }: { params: { processId: string } 
         <div className="card card-growth">
           <span className="badge-growth">✓ MAPPED</span>
           <h2 style={{ marginBottom: 4 }}>Process mapped</h2>
-          <p className="hint">Here is how {summary.process} works in your business, based on your answers.</p>
+          <p className="hint">Here is how {summary.process} works in your agency, based on your answers.</p>
         </div>
         <div className="card">
           <b>Current workflow</b>

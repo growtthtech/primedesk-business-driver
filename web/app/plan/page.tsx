@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import ProgressBar from "../../components/ProgressBar";
 import BottomNav from "../../components/BottomNav";
+import WorkspacePreview from "../../components/WorkspacePreview";
 
 type Rec = {
   id: string; process_id: string; process_name: string; stage: string;
@@ -95,11 +96,30 @@ export default function PlanPage() {
   if (loading) return <div className="card"><p className="hint">Building your plan...</p></div>;
   if (denied === "login") {
     return (
-      <div className="card" style={{ textAlign: "center" }}>
-        <h2>Your plan lives here</h2>
-        <p className="hint">Log in to see digital tools matched to your mapped processes.</p>
-        <Link href="/login" className="btn-primary" style={{ display: "block", textDecoration: "none", textAlign: "center" }}>Log in →</Link>
-      </div>
+      <WorkspacePreview
+        eyebrow="MY PLAN — SAMPLE PREVIEW"
+        title="Know what to do next."
+        copy="My Plan turns your mapped processes into prioritized improvements — what matters now, what comes next, and what can wait. Every suggestion explains why it fits your agency."
+        next="/plan"
+        primaryLabel="Start My Plan"
+        sample={
+          <div>
+            {[
+              ["⚡ NOW", "Centralize client communication", "pill-progress"],
+              ["🌱 LATER", "Standardize monthly reporting", "pill-waiting"],
+              ["🔭 FUTURE", "Build a referral pipeline", "pill-todo"],
+            ].map(([stage, t, pill]) => (
+              <div key={t} style={{ border: "1px solid #E6EAF0", borderRadius: 12, padding: 12, margin: "8px 0" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                  <b>{t}</b>
+                  <span className={`pill ${pill}`}>{stage}</span>
+                </div>
+                <p className="hint" style={{ margin: "4px 0 0" }}>Why it fits a fictional example agency — yours will differ.</p>
+              </div>
+            ))}
+          </div>
+        }
+      />
     );
   }
   if (denied && denied !== "login") {
@@ -120,7 +140,7 @@ export default function PlanPage() {
         {summary.total === 0 ? (
           <>
             <h2 style={{ marginBottom: 4 }}>You&apos;re doing fine for now.</h2>
-            <p style={{ color: "#8A4A1B", margin: 0 }}>We didn&apos;t identify a digital tool you need at this stage. Keep using your current process and review it as you grow. <Link href="/map">Continue mapping →</Link></p>
+            <p style={{ color: "#8A4A1B", margin: 0 }}>No tool needed at this stage. Keep your process — review as you grow. <Link href="/map">Continue mapping →</Link></p>
           </>
         ) : (
           <>

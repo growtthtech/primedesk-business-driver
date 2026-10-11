@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import ProgressBar from "../../components/ProgressBar";
 import BottomNav from "../../components/BottomNav";
+import WorkspacePreview from "../../components/WorkspacePreview";
 
 type Sel = {
   id: string; tool_id: string; tool_name: string; tool_description: string;
@@ -54,17 +55,36 @@ export default function DrivePage() {
   if (loading) return <div className="card"><p className="hint">Loading your drive...</p></div>;
   if (denied === "login") {
     return (
-      <div className="card" style={{ textAlign: "center" }}>
-        <h2>🚗 My Drive</h2>
-        <p className="hint">Log in to see the tools you have chosen.</p>
-        <Link href="/login" className="btn-primary" style={{ display: "block", textDecoration: "none", textAlign: "center" }}>Log in →</Link>
-      </div>
+      <WorkspacePreview
+        eyebrow="MY DRIVE — SAMPLE PREVIEW"
+        title="Your agency journey starts here."
+        copy="Keep track of the digital tools you use, the solutions you are considering, and the decisions that move your agency forward."
+        next="/drive"
+        primaryLabel="Start My Drive"
+        sample={
+          <div>
+            {[
+              ["Project board", "Using", "pill-mapped"],
+              ["Invoicing tool", "Under consideration", "pill-waiting"],
+              ["Reporting add-on", "Selected", "pill-progress"],
+            ].map(([t, s, pill]) => (
+              <div key={t} style={{ border: "1px solid #E6EAF0", borderRadius: 12, padding: 12, margin: "8px 0" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                  <b>{t}</b>
+                  <span className={`pill ${pill}`}>{s}</span>
+                </div>
+                <p className="hint" style={{ margin: "4px 0 0" }}>Fictional example — your drive holds tools you choose.</p>
+              </div>
+            ))}
+          </div>
+        }
+      />
     );
   }
   if (denied && denied !== "login") {
     return (
       <div className="card" style={{ textAlign: "center" }}>
-        <h2>🚗 My Drive</h2>
+        <h2>My Drive</h2>
         <p className="hint">{denied === "load" ? "We couldn't load your drive. Check your connection and retry." : denied}</p>
         <Link href="/business-profile" className="btn-primary" style={{ display: "block", textDecoration: "none", textAlign: "center" }}>Set up my business →</Link>
       </div>
@@ -81,13 +101,13 @@ export default function DrivePage() {
     <div className="fade-in">
       <ProgressBar step={5} />
       <div className="card">
-        <h2>🚗 My Drive</h2>
+        <h2>My Drive</h2>
         <p className="hint">{tools.length === 0 ? "Only tools you choose appear here." : `${tools.length} tool${tools.length === 1 ? "" : "s"} you chose.`}</p>
       </div>
       {tools.length === 0 && (
         <div className="card" style={{ textAlign: "center" }}>
-          <h2 style={{ marginBottom: 4 }}>Your digital stack starts here.</h2>
-          <p className="hint">As you explore your recommendations in My Plan, choose the tools that make sense for your business and they will appear here.</p>
+          <h2 style={{ marginBottom: 4 }}>Your stack starts here.</h2>
+          <p className="hint">Tools you add in My Plan will appear here.</p>
           <Link href="/plan" className="btn-primary" style={{ display: "block", textDecoration: "none", textAlign: "center" }}>Explore My Plan →</Link>
         </div>
       )}

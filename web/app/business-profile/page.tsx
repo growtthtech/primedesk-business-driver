@@ -83,16 +83,16 @@ export default function BusinessProfilePage() {
     }
   }
 
-  if (loading) return <div className="card"><p className="hint">Loading your business...</p></div>;
+  if (loading) return <div className="card"><p className="hint">Loading your agency...</p></div>;
 
   const subs = category ? CATEGORIES[category] || [] : [];
 
   return (
     <div className="fade-in">
       <div className="card">
-        <h2>{isNew ? "Tell us about your business" : "Your business profile"}</h2>
-        <p className="hint">This helps PrimeDesk show only processes and tools that fit you.</p>
-        <label>Business name<br /><input className="field" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Glow Hair Studio" maxLength={120} /></label>
+        <h2>{isNew ? "Tell us about your agency" : "Your agency profile"}</h2>
+        <p className="hint">Only processes and tools that fit you.</p>
+        <label>Agency name<br /><input className="field" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Brightline Media" maxLength={120} /></label>
         <div style={{ height: 10 }} />
         <label>Business category<br />
           <select className="field" value={category} onChange={(e) => pickCategory(e.target.value)}>
@@ -164,7 +164,7 @@ export default function BusinessProfilePage() {
         })}
         <div style={{ height: 10 }} />
         <label>What technology do you use today? (optional)<br />
-          <textarea className="field" rows={3} value={techUsage} onChange={(e) => setTechUsage(e.target.value)} placeholder="e.g. WhatsApp, notebook, Google Sheets..." maxLength={1000} />
+          <textarea className="field" rows={3} value={techUsage} onChange={(e) => setTechUsage(e.target.value)} placeholder="e.g. Spreadsheets, shared docs, project board..." maxLength={1000} />
         </label>
         <div style={{ height: 12 }} />
         <button className="btn-primary" disabled={busy} onClick={save}>{busy ? "Saving..." : isNew ? "Save and continue →" : "Save changes"}</button>
@@ -174,9 +174,9 @@ export default function BusinessProfilePage() {
       {!isNew && (
         <div className="card card-growth">
           <span className="badge-growth">🌱 FIRST STEP DONE</span>
-          <h2 style={{ marginBottom: 4 }}>Understand How Your Business Works</h2>
-          <p className="hint">PrimeDesk will help you understand how your business currently operates, identify areas that can be improved, and find digital tools that fit your business.</p>
-          <button className="btn-primary" onClick={() => router.push("/map")}>Start Mapping My Business →</button>
+          <h2 style={{ marginBottom: 4 }}>Now map how you work.</h2>
+          <p className="hint">Turn your agency into a clear process map — then get your plan.</p>
+          <button className="btn-primary" onClick={() => router.push("/map")}>Start Mapping →</button>
           <Link href="/drive" style={{ display: "block", textAlign: "center", marginTop: 10, color: "#1A56DB", fontSize: 14 }}>or open My Drive</Link>
         </div>
       )}

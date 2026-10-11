@@ -1,14 +1,25 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "../../lib/auth-client";
 import { normalizeNG, maskEmail, maskPhone } from "../../lib/phone";
 
 type Channel = "email" | "phone";
 
-export default function LoginPage() {
+// Only allow internal workspace destinations. Anything else falls back.
+const SAFE_NEXT = new Set(["/start", "/business-profile", "/map", "/plan", "/drive", "/profile"]);
+function safeNext(v: string | null): string | null {
+  if (!v) return null;
+  if (!v.startsWith("/") || v.startsWith("//") || v.includes("?") || v.includes("#")) return null;
+  const base = v.split("?")[0];
+  return SAFE_NEXT.has(base) ? base : null;
+}
+
+function LoginForm() {
   const router = useRouter();
+  const search = useSearchParams();
+  const next = safeNext(search.get("next"));
   const [input, setInput] = useState("");
   const [channel, setChannel] = useState<Channel>("email");
   const [target, setTarget] = useState("");
@@ -25,15 +36,21 @@ export default function LoginPage() {
   }, [cooldown]);
 
   async function afterAuth() {
+    if (next && next !== "/business-profile") {
+      // Return visitors to the feature they asked for; the page itself
+      // redirects to setup when the agency profile is incomplete.
+      router.push(next);
+      return;
+    }
     try {
       const r = await fetch("/api/business");
       if (r.ok) {
         const j = await r.json();
-        router.push(j.ok && j.business ? "/drive" : "/business-profile");
+        router.push(j.ok && j.business ? (next || "/drive") : "/business-profile");
         return;
       }
     } catch {}
-    router.push("/drive");
+    router.push(next || "/business-profile");
   }
 
   async function send() {
@@ -81,10 +98,10 @@ export default function LoginPage() {
   return (
     <div className="fade-in">
       <div className="card" style={{ textAlign: "center", padding: "28px 20px", background: "#F2F6FB" }}>
-        <p style={{ fontSize: 40, margin: 0 }}>🚗</p>
-        <h1 style={{ fontSize: 24, color: "#1A3A5C", margin: "8px 0 4px" }}>Start with PrimeDesk</h1>
-        <p style={{ margin: 0, color: "#1A3A5C" }}>Drive your business to the desired destination with the perfect digital tools.</p>
-        <p className="hint">Enter your email or phone number to continue. No passwords.</p>
+        <p style={{ fontSize: 40, margin: 0 }}>🧭</p>
+        <h1 style={{ fontSize: 24, color: "#1A3A5C", margin: "8px 0 4px" }}>Start free</h1>
+        <p style={{ margin: 0, color: "#1A3A5C" }}>Map your agency. Fix what&apos;s broken. Choose tools with confidence.</p>
+        <p className="hint">No passwords — we send you a code.</p>
       </div>
 
       <div className="card">
@@ -114,5 +131,13 @@ export default function LoginPage() {
         <Link href="/" style={{ display: "block", textAlign: "center", marginTop: 10, color: "#1A56DB", fontSize: 14 }}>← Back home</Link>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="card"><p className="hint">Loading login...</p></div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

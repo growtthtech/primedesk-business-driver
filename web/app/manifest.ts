@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "PrimeDesk — Business Driver",
+    name: "PrimeDesk — Your Agency. Your Destination. A Clearer Route.",
     short_name: "PrimeDesk",
-    description: "Understand your business processes and find the right digital tools.",
+    description: "Understand your agency's processes and find the right digital tools.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
