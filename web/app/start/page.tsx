@@ -51,6 +51,11 @@ export default function StartPage() {
           <h2 style={{ marginBottom: 4 }}>Continue your journey.</h2>
           <p className="hint">Your profile is set. Pick up where you left off.</p>
           <button className="btn-primary" onClick={() => router.push("/map")}>Continue to My Map →</button>
+          {legacy && (
+            <button className="btn-ghost" style={{ marginTop: 8 }} onClick={() => router.push("/map")}>
+              Continue previous progress →
+            </button>
+          )}
           <Link href="/drive" style={{ display: "block", textAlign: "center", marginTop: 10, color: "#1A56DB", fontSize: 14 }}>or open My Drive</Link>
         </div>
       </div>
@@ -101,11 +106,6 @@ export default function StartPage() {
           Have an account? <Link href="/login?next=%2Fbusiness-profile" style={{ color: "#1A56DB" }}>Log in</Link>
           {" • "}<Link href="/how-it-works" style={{ color: "#1A56DB" }}>How it works</Link>
         </p>
-        {legacy && (
-          <button className="btn-ghost" style={{ marginTop: 8 }} onClick={() => router.push("/map")}>
-            Continue previous progress →
-          </button>
-        )}
       </div>
     </div>
   );
