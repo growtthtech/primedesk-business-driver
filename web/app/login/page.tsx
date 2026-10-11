@@ -6,7 +6,7 @@ import { authClient } from "../../lib/auth-client";
 import { maskEmail } from "../../lib/phone";
 
 // Only allow internal workspace destinations. Anything else falls back.
-const SAFE_NEXT = new Set(["/start", "/business-profile", "/map", "/plan", "/drive", "/profile"]);
+const SAFE_NEXT = new Set(["/start", "/business-profile", "/map", "/plan", "/drive", "/profile", "/dashboard"]);
 function safeNext(v: string | null): string | null {
   if (!v) return null;
   if (!v.startsWith("/") || v.startsWith("//") || v.includes("?") || v.includes("#")) return null;
@@ -43,7 +43,7 @@ function LoginForm() {
       const r = await fetch("/api/business");
       if (r.ok) {
         const j = await r.json();
-        router.push(j.ok && j.business ? (next || "/drive") : "/business-profile");
+        router.push(j.ok && j.business ? (next || "/dashboard") : "/business-profile");
         return;
       }
     } catch {}

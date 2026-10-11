@@ -3,6 +3,7 @@ import { query } from "@/lib/db";
 import { ownBusiness } from "@/lib/owned";
 import { normalizeCategory, normalizeSubtype } from "@/lib/business-categories";
 import { computeRelevance, TRAIT_QUESTIONS, type RuleRow } from "@/lib/business-model";
+import { isKeyProcess } from "@/lib/agency-keys";
 
 // GET -> My Map structure: areas with relevant processes + statuses + pending questions.
 export async function GET(req: Request) {
@@ -43,7 +44,12 @@ export async function GET(req: Request) {
       [biz.id, pids, pids.map((p) => rel[p])]
     );
     const hiddenList: { id: string; name: string }[] = [];
-    const areas = areasR.rows.map((a) => ({
+    // Agencies see only agency-segment areas: no SME processes
+    // (orders, bookings, stock, …) even where shared rules allow them.
+    const areaRows = segment === "agency"
+      ? areasR.rows.filter((a) => ((a.segment as string) || "sme") === "agency")
+      : areasR.rows;
+    const areas = areaRows.map((a) => ({
       id: a.id,
       name: a.name,
       description: a.description,
@@ -62,6 +68,7 @@ export async function GET(req: Request) {
             description: p.description,
             status: stored[pid] || "not_started",
             relevance: rel[pid],
+            key: isKeyProcess(pid),
           };
         })
         .filter((p): p is NonNullable<typeof p> => p !== null)

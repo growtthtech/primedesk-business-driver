@@ -196,7 +196,7 @@ export default function BusinessProfilePage() {
           <h2 style={{ marginBottom: 4 }}>Now map how you work.</h2>
           <p className="hint">Turn your agency into a clear process map — then get your plan.</p>
           <button className="btn-primary" onClick={() => router.push("/map")}>Start Mapping →</button>
-          <Link href="/drive" style={{ display: "block", textAlign: "center", marginTop: 10, color: "#1A56DB", fontSize: 14 }}>or open My Drive</Link>
+          <Link href="/dashboard" style={{ display: "block", textAlign: "center", marginTop: 10, color: "#1A56DB", fontSize: 14 }}>or open my dashboard</Link>
         </div>
       )}
     </div>

@@ -56,7 +56,7 @@ export default function StartPage() {
               Continue previous progress →
             </button>
           )}
-          <Link href="/drive" style={{ display: "block", textAlign: "center", marginTop: 10, color: "#1A56DB", fontSize: 14 }}>or open My Drive</Link>
+          <Link href="/dashboard" style={{ display: "block", textAlign: "center", marginTop: 10, color: "#1A56DB", fontSize: 14 }}>or open my dashboard</Link>
         </div>
       </div>
     );

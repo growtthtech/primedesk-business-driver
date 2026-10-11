@@ -64,6 +64,11 @@ export async function mappingContext(req: Request, processId: string): Promise<M
     const segment = category === "Digital Marketing Agency" ? "agency" : "sme";
     const rel = computeRelevance(category, subtype, traits, rulesR.rows as RuleRow[], [processId], { services, solo, areaOf, strictAreas: ["ag-delivery"], segment, segmentOf })[processId];
     if (rel === "not_relevant") return { error: "That process isn't part of your map.", status: 400 as const };
+    // Agencies map agency processes only — SME processes (orders, bookings, …)
+    // stay out even where shared rules would allow them.
+    if (segment === "agency" && segmentOf[proc.rows[0].area_id as string] !== "agency") {
+      return { error: "That process isn't part of your map.", status: 400 as const };
+    }
     const saved = await query("select answers,status from process_mappings where business_id=$1 and process_id=$2", [biz.id, processId]);
     return {
       business: biz,

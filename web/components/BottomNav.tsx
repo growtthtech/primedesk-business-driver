@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -9,8 +10,24 @@ const tabs = [
   { href: "/profile", label: "👤 You" },
 ];
 
+// Workspace tabs stay hidden until the agency finishes its first process.
+// Anything else (logged out, no profile, zero mapped) renders nothing —
+// the dashboard is the only entry point until then.
 export default function BottomNav() {
   const path = usePathname();
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/my-map")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (j?.ok && (j.progress?.mapped || 0) > 0) setShow(true);
+      })
+      .catch(() => {});
+  }, []);
+
+  if (!show) return null;
+
   return (
     <nav
       style={{

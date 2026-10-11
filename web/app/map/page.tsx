@@ -41,8 +41,13 @@ export default function MapPage() {
   const allowed = gate === "in";
   const [fresh, setFresh] = useState("");
   const [saved, setSaved] = useState("");
-  const [mapData, setMapData] = useState<{ business: { name: string }; areas: { id: string; name: string; description: string; processes: { id: string; name: string; description: string; status: string; relevance: string }[] }[]; hidden: { id: string; name: string }[]; pendingQuestions: { trait: string; question: string }[] } | null>(null);
+  const [mapData, setMapData] = useState<{ business: { name: string }; progress: { mapped: number; total: number }; areas: { id: string; name: string; description: string; processes: { id: string; name: string; description: string; status: string; relevance: string; key: boolean }[] }[]; hidden: { id: string; name: string }[]; pendingQuestions: { trait: string; question: string }[] } | null>(null);
   const [showHidden, setShowHidden] = useState(false);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  function toggleArea(id: string) {
+    setExpanded((cur) => ({ ...cur, [id]: !cur[id] }));
+  }
 
   function loadMap() {
     fetch("/api/my-map")
@@ -179,11 +184,15 @@ export default function MapPage() {
               ))}
             </div>
           )}
-          {mapData.areas.map((a) => (
+          {mapData.areas.map((a) => {
+            const keyProcs = a.processes.filter((p) => p.key);
+            const extra = a.processes.filter((p) => !p.key);
+            const shown = expanded[a.id] ? a.processes : keyProcs.length > 0 ? keyProcs : a.processes;
+            return (
             <div key={a.id} style={{ marginTop: 12 }}>
               <b>{a.name}</b>
-              <p className="hint" style={{ margin: "2px 0 8px" }}>{a.processes.length} relevant process{a.processes.length === 1 ? "" : "es"}</p>
-              {a.processes.map((p) => (
+              <p className="hint" style={{ margin: "2px 0 8px" }}>{a.processes.length} relevant process{a.processes.length === 1 ? "" : "es"}{extra.length > 0 && !expanded[a.id] && keyProcs.length > 0 ? ` — showing ${keyProcs.length} key for growth` : ""}</p>
+              {shown.map((p) => (
                 <div key={p.id} style={{ border: "1px solid #E6EAF0", borderRadius: 12, padding: 12, margin: "8px 0" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
                     <b>{p.name}</b>
@@ -200,8 +209,14 @@ export default function MapPage() {
                   )}
                 </div>
               ))}
+              {extra.length > 0 && keyProcs.length > 0 && (
+                <button onClick={() => toggleArea(a.id)} style={{ border: 0, background: "transparent", color: "#1A56DB", fontSize: 13, cursor: "pointer", padding: "4px 0" }}>
+                  {expanded[a.id] ? "Show key processes only ▲" : `Show all ${a.processes.length} processes ▼`}
+                </button>
+              )}
             </div>
-          ))}
+            );
+          })}
           {mapData.hidden.length > 0 && (
             <div style={{ marginTop: 8 }}>
               <button onClick={() => setShowHidden(!showHidden)} style={{ border: 0, background: "transparent", color: "#1A56DB", fontSize: 13, cursor: "pointer" }}>
