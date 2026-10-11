@@ -51,11 +51,25 @@ function LoginForm() {
   }
 
   async function send() {
-    const v = input.trim();
+    const v = input.trim().toLowerCase();
     if (!v) { setMsg("Enter your email."); return; }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) { setMsg("That email doesn't look right. Check it and retry."); return; }
-    setBusy(true); setMsg("Sending your code...");
+    setBusy(true); setMsg("Checking...");
     try {
+      // Closed pilot: only emails already on record can sign in here.
+      const chk = await fetch("/api/auth/check-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: v }),
+      }).then((r) => r.json()).catch(() => null);
+      if (!chk) { setMsg("No connection. Check your internet and retry."); return; }
+      if (chk.ok === false && !chk.exists) { setMsg(chk.error || "We couldn't check that. Please try again."); return; }
+      if (chk.ok && !chk.exists) {
+        setMsg("This email isn't registered. Taking you to create your account...");
+        setTimeout(() => router.push("/start"), 1500);
+        return;
+      }
+      setMsg("Sending your code...");
       const res = await authClient.emailOtp.sendVerificationOtp({ email: v, type: "sign-in" });
       if (res.error) { setMsg("We couldn't send your code. Check the email and try again."); return; }
       setTarget(v);

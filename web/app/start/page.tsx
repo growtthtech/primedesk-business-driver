@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProgressBar from "../../components/ProgressBar";
+import { authClient } from "../../lib/auth-client";
+import { maskEmail } from "../../lib/phone";
 import { loadState } from "../../lib/store";
 
 // Agency entry point (existing /start route, repositioned).
@@ -19,6 +21,12 @@ export default function StartPage() {
   const [hasBusiness, setHasBusiness] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [legacy, setLegacy] = useState(false);
+  // New-account signup (login is closed to registered emails only).
+  const [email, setEmail] = useState("");
+  const [codeSent, setCodeSent] = useState(false);
+  const [code, setCode] = useState("");
+  const [signupMsg, setSignupMsg] = useState("");
+  const [signupBusy, setSignupBusy] = useState(false);
 
   useEffect(() => {
     try {
@@ -76,6 +84,42 @@ export default function StartPage() {
     );
   }
 
+  async function sendSignupCode() {
+    const v = email.trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) { setSignupMsg("Enter a valid email."); return; }
+    setSignupBusy(true); setSignupMsg("Sending your code...");
+    try {
+      const chk = await fetch("/api/auth/check-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: v }),
+      }).then((r) => r.json()).catch(() => null);
+      if (!chk) { setSignupMsg("No connection. Check your internet and retry."); return; }
+      if (chk.ok && chk.exists) { setSignupMsg("This email already has an account. Log in instead."); return; }
+      // New email: sign-in OTP auto-registers the account (login stays
+      // closed to unknown emails — registration happens only here).
+      const res = await authClient.emailOtp.sendVerificationOtp({ email: v, type: "sign-in" });
+      if (res.error) { setSignupMsg("We couldn't send your code. Check the email and try again."); return; }
+      setCodeSent(true);
+      setSignupMsg(`We sent a code to ${maskEmail(v)}.`);
+    } finally {
+      setSignupBusy(false);
+    }
+  }
+
+  async function verifySignupCode() {
+    const v = email.trim().toLowerCase();
+    if (code.trim().length < 6) { setSignupMsg("Enter the 6-digit code."); return; }
+    setSignupBusy(true); setSignupMsg("Checking...");
+    try {
+      const res = await authClient.signIn.emailOtp({ email: v, otp: code.trim() });
+      if (res.error) { setSignupMsg("That code didn't work. Check it and retry, or resend a fresh one."); return; }
+      router.push("/business-profile");
+    } finally {
+      setSignupBusy(false);
+    }
+  }
+
   return (
     <div className="fade-in">
       <ProgressBar step={1} />
@@ -99,9 +143,31 @@ export default function StartPage() {
           </div>
         ))}
         <div style={{ height: 12 }} />
-        <Link href="/login?next=%2Fbusiness-profile" className="btn-action" style={{ display: "block", textDecoration: "none", textAlign: "center" }}>
-          Create my account →
-        </Link>
+        {!codeSent ? (
+          <>
+            <label htmlFor="start-email">Email<br />
+              <input id="start-email" className="field" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@youragency.com" inputMode="email" autoComplete="email" />
+            </label>
+            <div style={{ height: 12 }} />
+            <button className="btn-action" style={{ width: "100%" }} disabled={signupBusy} onClick={sendSignupCode}>
+              {signupBusy ? "Sending..." : "Create my account →"}
+            </button>
+          </>
+        ) : (
+          <>
+            <h2 style={{ margin: "0 0 4px" }}>Check your inbox</h2>
+            <p className="hint">We sent a code to <b>{maskEmail(email.trim().toLowerCase())}</b> <button onClick={() => { setCodeSent(false); setCode(""); setSignupMsg(""); }} style={{ border: 0, background: "none", color: "#1A56DB", cursor: "pointer", fontSize: 13 }}>(change)</button></p>
+            <p className="hint" style={{ fontSize: 13 }}>Can&apos;t find it? Check spam or promotions.</p>
+            <label htmlFor="start-code">6-digit code<br />
+              <input id="start-code" className="field" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="• • • • • •" inputMode="numeric" autoComplete="one-time-code" maxLength={6} style={{ letterSpacing: 6, textAlign: "center", fontSize: 22, fontWeight: 800 }} />
+            </label>
+            <div style={{ height: 12 }} />
+            <button className="btn-primary" style={{ width: "100%" }} disabled={signupBusy} onClick={verifySignupCode}>
+              {signupBusy ? "Checking..." : "Verify & continue →"}
+            </button>
+          </>
+        )}
+        {signupMsg && <p className="hint" role="status" aria-live="polite" style={{ marginTop: 10 }}>{signupMsg}</p>}
         <p className="hint" style={{ textAlign: "center", margin: "10px 0 0" }}>
           Have an account? <Link href="/login?next=%2Fbusiness-profile" style={{ color: "#1A56DB" }}>Log in</Link>
           {" • "}<Link href="/how-it-works" style={{ color: "#1A56DB" }}>How it works</Link>
