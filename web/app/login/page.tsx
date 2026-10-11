@@ -102,6 +102,7 @@ function LoginForm() {
           <>
             <h2>Enter your verification code</h2>
             <p className="hint">We sent a code to <b>{maskEmail(target)}</b> <button onClick={() => { setSent(false); setCode(""); setMsg(""); }} style={{ border: 0, background: "none", color: "#1A56DB", cursor: "pointer", fontSize: 13 }}>(change)</button></p>
+            <p className="hint" style={{ fontSize: 13 }}>Can&apos;t find it? Check spam or promotions, then mark it “Not spam” so the next code lands in your inbox.</p>
             <label htmlFor="login-code">6-digit code<br />
               <input id="login-code" className="field" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="• • • • • •" inputMode="numeric" autoComplete="one-time-code" maxLength={6} style={{ letterSpacing: 6, textAlign: "center", fontSize: 22, fontWeight: 800 }} />
             </label>

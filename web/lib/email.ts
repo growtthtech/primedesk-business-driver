@@ -12,7 +12,9 @@ async function sendViaGmail(to: string, subject: string, html: string): Promise<
   if (!user || !pass) return null;
   try {
     const t = nodemailer.createTransport({ service: "gmail", auth: { user, pass } });
-    await t.sendMail({ from: `"PrimeDesk" <${user}>`, to, subject, html });
+    // Multipart (text + html): HTML-only mail is a classic spam-filter trigger.
+    const text = html.replace(/<br\s*\/?>/gi, "\n").replace(/<\/(p|div|h1|h2|h3)>/gi, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim();
+    await t.sendMail({ from: `"PrimeDesk" <${user}>`, replyTo: user, to, subject, text, html });
     return { ok: true, mode: "real", via: "gmail" };
   } catch (e) {
     return { ok: false, mode: "real", via: "gmail", error: e instanceof Error ? e.message : String(e) };
