@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PrimeDesk</string>
+    <string name="title_activity_main">PrimeDesk</string>
+    <string name="package_name">com.primedesk.app</string>
+    <string name="custom_url_scheme">com.primedesk.app</string>
+</resources>
