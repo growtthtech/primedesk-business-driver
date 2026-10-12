@@ -55,13 +55,6 @@ export default function MapPage() {
     router.push(`/map/${pid}`);
   }
 
-  async function answerTrait(trait: string, answer: boolean | null) {
-    try {
-      await fetch("/api/my-map/traits", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trait, answer }) });
-    } catch {}
-    loadMap();
-  }
-
   async function hideProcess(pid: string, hide: boolean) {
     try {
       await fetch("/api/my-map/hide", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ processId: pid, hide }) });
@@ -118,21 +111,6 @@ export default function MapPage() {
         <div className="card">
           <h2>My Map — {mapData.business.name || "My Agency"}</h2>
           <p className="hint">Where your agency stands. Start a process to map it properly.</p>
-          {mapData.pendingQuestions.length > 0 && (
-            <div style={{ background: "#F8FAFD", border: "1px solid #E6EAF0", borderRadius: 12, padding: 12, margin: "8px 0" }}>
-              <b>Quick check — helps us show only what fits:</b>
-              {mapData.pendingQuestions.slice(0, 3).map((q) => (
-                <div key={q.trait} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, padding: "8px 0" }}>
-                  <span style={{ fontSize: 14 }}>{q.question}</span>
-                  <span style={{ display: "flex", gap: 6, whiteSpace: "nowrap" }}>
-                    <button className="btn-ghost" style={{ width: 56, padding: 8 }} onClick={() => answerTrait(q.trait, true)}>Yes</button>
-                    <button className="btn-ghost" style={{ width: 56, padding: 8 }} onClick={() => answerTrait(q.trait, false)}>No</button>
-                    <button className="btn-ghost" style={{ width: 76, padding: 8, border: 0, background: "transparent", color: "#1A56DB" }} onClick={() => answerTrait(q.trait, null)}>Not sure</button>
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
           {mapData.areas.map((a) => {
             const keyProcs = a.processes.filter((p) => p.key);
             const extra = a.processes.filter((p) => !p.key);

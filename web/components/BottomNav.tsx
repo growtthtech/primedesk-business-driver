@@ -4,10 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const tabs = [
-  { href: "/map", label: "🗺 Map" },
-  { href: "/plan", label: "⚡ Plan" },
-  { href: "/drive", label: "🚗 Drive" },
-  { href: "/profile", label: "👤 You" },
+  { href: "/map", label: "Map" },
+  { href: "/plan", label: "Plan" },
+  { href: "/drive", label: "Drive" },
 ];
 
 // Workspace tabs stay hidden until the agency finishes its first process.
@@ -27,14 +26,17 @@ export default function BottomNav() {
   }, []);
 
   if (!show) return null;
+  const profileOn = path === "/profile";
 
   return (
     <nav
+      aria-label="Workspace"
       style={{
         position: "sticky",
         bottom: 0,
         display: "flex",
         gap: 8,
+        alignItems: "center",
         background: "#fff",
         border: "1px solid #E6EAF0",
         borderRadius: 16,
@@ -60,10 +62,29 @@ export default function BottomNav() {
               color: on ? "#fff" : "#1A3A5C",
             }}
           >
-            {t.label}
+            <span aria-hidden="true" style={{ color: on ? "#E8B62A" : "#E8590C", fontWeight: 800 }}>●</span> {t.label}
           </Link>
         );
       })}
+      <Link
+        href="/profile"
+        aria-label="Your account"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: 44,
+          height: 44,
+          borderRadius: "50%",
+          textDecoration: "none",
+          fontSize: 20,
+          background: profileOn ? "#E8590C" : "#F2F4F7",
+          border: profileOn ? "2px solid #E8590C" : "1px solid #E6EAF0",
+          flexShrink: 0,
+        }}
+      >
+        <span aria-hidden="true" style={{ filter: profileOn ? "brightness(0) invert(1)" : "none" }}>👤</span>
+      </Link>
     </nav>
   );
 }

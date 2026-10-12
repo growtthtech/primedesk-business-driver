@@ -49,10 +49,10 @@ export default function Landing() {
       {/* 1 — HERO (keeps the dark route color) */}
       <section className="full-bleed" style={{ background: "#0B1D33", color: "#fff", marginTop: -16, paddingTop: 8 }}>
         <div className="bleed-inner">
-          <span style={{ background: "#E8590C", color: "#fff", fontSize: 12, fontWeight: 800, padding: "4px 12px", borderRadius: 20 }}>
+          <span className="hide-mobile" style={{ background: "#E8590C", color: "#fff", fontSize: 12, fontWeight: 800, padding: "4px 12px", borderRadius: 20 }}>
             YOUR AGENCY. YOUR DESTINATION. A CLEARER ROUTE.
           </span>
-          <h1 style={{ fontSize: 38, margin: "14px 0 0", lineHeight: 1.1 }}>
+          <h1 className="hero-title" style={{ margin: "14px 0 0", lineHeight: 1.1 }}>
             Drive Your Agency Towards Its <span style={{ color: "#E8B62A" }}>Next Level.</span>
           </h1>
           <div style={{ borderLeft: "4px solid #E8590C", paddingLeft: 16, marginTop: 18, maxWidth: 640 }}>

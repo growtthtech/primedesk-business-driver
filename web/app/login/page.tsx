@@ -66,7 +66,10 @@ function LoginForm() {
       if (chk.ok === false && !chk.exists) { setMsg(chk.error || "We couldn't check that. Please try again."); return; }
       if (chk.ok && !chk.exists) {
         setMsg("This email isn't registered. Taking you to create your account...");
-        setTimeout(() => router.push("/start"), 1500);
+        // Drop any stale session first: otherwise /start would greet this
+        // unknown email with the previous user's "continue mapping" screen.
+        try { await authClient.signOut(); } catch {}
+        setTimeout(() => router.replace("/start"), 1200);
         return;
       }
       setMsg("Sending your code...");

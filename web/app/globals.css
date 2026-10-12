@@ -50,6 +50,15 @@ button { font-family: var(--font-inter), Arial, sans-serif; }
 .bleed-inner h1 { margin: 14px 0 18px; line-height: 1.12; }
 .bleed-inner h2 { margin: 12px 0 16px; line-height: 1.3; }
 .bleed-inner p.hint + .card, .bleed-inner h2 + .card { margin-top: 20px; }
+.hero-title { font-size: 38px; }
+@media (max-width: 639px) {
+  .bleed-inner { padding: 28px 16px; }
+  .bleed-inner h1 { margin: 10px 0 14px; }
+  .bleed-inner h2 { font-size: 21px; margin: 10px 0 12px; }
+  .hero-title { font-size: 29px; }
+  .hide-mobile { display: none !important; }
+  .card { padding: 16px; margin: 10px 0; }
+}
 .grid-even { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .grid-even .card { margin: 0; }
 @media (min-width: 720px) { .grid-even { grid-template-columns: repeat(4, 1fr); } }

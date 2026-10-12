@@ -9,8 +9,8 @@ const config: CapacitorConfig = {
   server: {
     url: 'https://digitaldriver.netlify.app/',
     cleartext: false,
+    allowNavigation: ['digitaldriver.netlify.app'],
   },
-  allowNavigation: ['digitaldriver.netlify.app'],
 };
 
 export default config;

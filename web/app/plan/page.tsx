@@ -59,7 +59,7 @@ function RecCard({ r, onChange }: { r: Rec; onChange: () => void }) {
         </div>
       )}
       <div style={{ display: "flex", gap: 8 }}>
-        {r.website && <a href={r.website} target="_blank" rel="noreferrer" style={{ flex: 1, textAlign: "center", padding: 12, borderRadius: 12, border: "1px solid #E6EAF0", color: "#1A56DB", textDecoration: "none", fontSize: 14, fontWeight: 700 }}>Learn More</a>}
+        <Link href={r.tool_id ? `/tools/${r.tool_id}` : "/plan"} style={{ flex: 1, textAlign: "center", padding: 12, borderRadius: 12, border: "1px solid #E6EAF0", color: "#1A56DB", textDecoration: "none", fontSize: 14, fontWeight: 700 }}>Learn More</Link>
         <button className={r.in_drive ? "btn-ghost" : "btn-action"} style={{ flex: 2 }} disabled={busy} onClick={toggle}>
           {r.in_drive ? "✓ Added to My Drive" : "Add to My Drive"}
         </button>
